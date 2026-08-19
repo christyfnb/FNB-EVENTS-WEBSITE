@@ -132,6 +132,18 @@ test('registry validation rejects invalid shapes, duplicates, and non-canonical 
   const invalidShape = structuredClone(registry)
   delete invalidShape.services
   assert.throws(() => validateSiteRegistry(invalidShape, expectedCanonicalRoutes), /services/i)
+
+  for (const group of ['primaryNavigation', 'footerNavigation', 'utilityNavigation']) {
+    const duplicateNavigationHref = structuredClone(registry)
+    duplicateNavigationHref[group].push({
+      ...duplicateNavigationHref[group][0],
+      label: 'Duplicate target fixture',
+    })
+    assert.throws(
+      () => validateSiteRegistry(duplicateNavigationHref, expectedCanonicalRoutes),
+      new RegExp(`${group} href`, 'i'),
+    )
+  }
 })
 
 test('service entries carry explicit truth-safe conceptual media status', async () => {
