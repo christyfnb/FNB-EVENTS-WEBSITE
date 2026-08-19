@@ -72,7 +72,7 @@ When several apply, use the smallest set that covers the task and reconcile thei
 
 ## Verification gates
 
-- Work in the smallest approved phase and stop at its gate. Do not begin the next phase without authorization.
+- The complete browsable-site tranche is authorized for continuous execution. Follow the owner-approved execution order without pausing between internal phases; stop only for a destructive or irreversible action, an unauthorized external side effect, a new dependency requiring approval, or a genuinely impossible blocker.
 - Before claiming a phase complete, inspect the diff and run every applicable fresh gate: `git diff --check`, lint, TypeScript, repository audits, production build, route/link checks, and rendered desktop/mobile QA.
 - If a required script or environment capability is missing, report the gate as blocked or unverified; never substitute an assumption for a pass.
 - Compare rendered work with the baseline at `http://127.0.0.1:3000` and preserve the running baseline server when instructed. Do not kill or replace it without an explicit restart decision.
