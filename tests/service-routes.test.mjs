@@ -37,6 +37,10 @@ test('Task 4 content registry gates every rendered record by explicit publicatio
 
   const blocked = { ...getTask4ServiceContent(assignments[0][0]), publicationStatus: 'blocked' }
   assert.throws(() => assertApprovedTask4ServiceContent(blocked), /not approved for publication/i)
+
+  const event = getTask4ServiceContent('/services/event-production')
+  assert.ok(event.related.items.some((item) => item.href === '/services/exhibition-booth-design-build'), 'Event Production must retain the Exhibition Booth related link')
+  assert.match(await read('lib/task4-service-content.ts'), /href:\s*ServiceHref/)
 })
 
 test('all seven routes consume only their assigned approved registry record and contain no substantive inline copy or media selection', async () => {

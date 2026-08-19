@@ -8,11 +8,12 @@ type EditorialHeroProps = {
   lead: string
   media?: MediaAsset
   children?: ReactNode
+  serviceBlock?: string
 }
 
-export function EditorialHero({ eyebrow, title, lead, media, children }: EditorialHeroProps) {
+export function EditorialHero({ eyebrow, title, lead, media, children, serviceBlock }: EditorialHeroProps) {
   return (
-    <section aria-labelledby="page-heading" className="relative overflow-hidden border-b border-steel/50 bg-void pt-28 md:pt-36">
+    <section aria-labelledby="page-heading" data-service-block={serviceBlock} data-service-kind={serviceBlock ? 'hero' : undefined} className="relative overflow-hidden border-b border-steel/50 bg-void pt-28 md:pt-36">
       <div className="pointer-events-none absolute inset-x-0 top-16 h-px bg-gradient-to-r from-transparent via-signal/70 to-transparent" />
       <div className="mx-auto grid max-w-[1600px] gap-12 px-5 pb-16 md:px-10 md:pb-24 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)] lg:items-end">
         <div>

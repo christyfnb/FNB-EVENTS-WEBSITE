@@ -43,8 +43,9 @@ export type Task4ServiceContent = {
     disclosure: string
     boundary?: string
   }
-  related?: { id: string; label: string; linkLabel: string; title: string; items: readonly { number: string; name: string; href: Task4ServiceRoute }[] }
+  related?: { id: string; label: string; linkLabel: string; title: string; items: readonly { number: string; name: string; href: ServiceHref }[] }
   cta: { id: string; eyebrow: string; title: string; copy: string; label: string; href: '/project-enquiry' }
+  runtimeBoundaries: readonly { sectionKey: string; source: 'aside' | 'body' | 'media-boundary'; paragraphIndex?: number }[]
   composition: readonly {
     primitive: ServicePrimitive
     sectionKey?: string
@@ -78,8 +79,9 @@ export const TASK4_SERVICE_CONTENT = {
       execution: { id: 'execution', index: '07 · Execution', title: 'Move from plan to live decisions.', body: ['Execution thinking brings rehearsals, checks, handovers and live coordination into one sequence. The exact operating model depends on the approved scope, venue requirements and appointed delivery teams.'] },
     },
     media: { key: 'eventKeynote', runtimePath: '/media/fnb/capabilities/event-keynote-stage.png', sectionKey: 'staging', mediaPosition: 'end', mediaAspect: 'landscape', rhythm: 'early', disclosure: conceptualDisclosure },
-    related: { id: 'related-services', label: 'Related services', linkLabel: 'Explore', title: 'Connect the live show to its environment and technical system.', items: [{ number: '04', name: 'Technical Production', href: '/services/technical-production' }, { number: '03', name: 'Branding & Advertising', href: '/services/branding-advertising' }] },
+    related: { id: 'related-services', label: 'Related services', linkLabel: 'Explore', title: 'Connect the live show to its environment and technical system.', items: [{ number: '04', name: 'Technical Production', href: '/services/technical-production' }, { number: '03', name: 'Branding & Advertising', href: '/services/branding-advertising' }, { number: '01', name: 'Exhibition Booth Design & Build', href: '/services/exhibition-booth-design-build' }] },
     cta: { id: 'project-enquiry', eyebrow: 'Event enquiry', title: 'Start with the date, audience and run of show.', copy: 'Share the event format, location, timing, expected guest context and required disciplines so the production conversation can begin with the real constraints.', label: 'Start an event enquiry', href: commonCtaHref },
+    runtimeBoundaries: [],
     composition: [{ primitive: 'hero' }, { primitive: 'editorial', sectionKey: 'planning' }, { primitive: 'editorial', sectionKey: 'showDirection' }, { primitive: 'media-feature', sectionKey: 'staging', mediaPosition: 'end', mediaAspect: 'landscape', rhythm: 'early' }, { primitive: 'scope-list', sectionKey: 'liveSystems' }, { primitive: 'editorial', sectionKey: 'productionControl' }, { primitive: 'flow', sectionKey: 'guestExperience' }, { primitive: 'editorial', sectionKey: 'execution' }, { primitive: 'related-services' }, { primitive: 'cta' }],
   },
   '/services/branding-advertising': {
@@ -98,6 +100,7 @@ export const TASK4_SERVICE_CONTENT = {
     },
     media: { key: 'brandingLobby', runtimePath: '/media/fnb/capabilities/branding-lobby.png', sectionKey: 'spatialBranding', mediaPosition: 'start', mediaAspect: 'landscape', rhythm: 'middle', disclosure: conceptualDisclosure },
     cta: { id: 'project-enquiry', eyebrow: 'Brand enquiry', title: 'Bring the audience, message and surfaces into one brief.', copy: 'Share the communication problem, intended audience, existing brand inputs and required physical or digital applications for a grounded first conversation.', label: 'Start a brand enquiry', href: commonCtaHref },
+    runtimeBoundaries: [],
     composition: [{ primitive: 'hero' }, { primitive: 'editorial', sectionKey: 'brandStrategy' }, { primitive: 'scope-list', sectionKey: 'visualSystems' }, { primitive: 'editorial', sectionKey: 'campaignThinking' }, { primitive: 'media-feature', sectionKey: 'spatialBranding', mediaPosition: 'start', mediaAspect: 'landscape', rhythm: 'middle' }, { primitive: 'editorial', sectionKey: 'eventBranding' }, { primitive: 'editorial', sectionKey: 'advertising' }, { primitive: 'scope-list', sectionKey: 'contentSurfaces' }, { primitive: 'editorial', sectionKey: 'consistency' }, { primitive: 'cta' }],
   },
   '/services/technical-production': {
@@ -116,6 +119,7 @@ export const TASK4_SERVICE_CONTENT = {
     },
     media: { key: 'technicalControl', runtimePath: '/media/fnb/capabilities/technical-control.png', sectionKey: 'signals', mediaPosition: 'end', mediaAspect: 'landscape', rhythm: 'early', disclosure: conceptualDisclosure, boundary: 'The conceptual control-room image is not project evidence and does not represent an owned FNB equipment inventory.' },
     cta: { id: 'project-enquiry', eyebrow: 'Technical enquiry', title: 'Start with the room, programme and technical dependencies.', copy: 'Share the venue context, event format, content needs, audience conditions and known interfaces. A technical approach can only follow review of those constraints.', label: 'Start a technical enquiry', href: commonCtaHref },
+    runtimeBoundaries: [{ sectionKey: 'planning', source: 'aside' }, { sectionKey: 'signals', source: 'media-boundary' }],
     composition: [{ primitive: 'hero' }, { primitive: 'editorial', sectionKey: 'planning' }, { primitive: 'media-feature', sectionKey: 'signals', mediaPosition: 'end', mediaAspect: 'landscape', rhythm: 'early' }, { primitive: 'scope-list', sectionKey: 'lighting' }, { primitive: 'editorial', sectionKey: 'audio' }, { primitive: 'editorial', sectionKey: 'display' }, { primitive: 'flow', sectionKey: 'controls' }, { primitive: 'editorial', sectionKey: 'integration' }, { primitive: 'editorial', sectionKey: 'execution' }, { primitive: 'cta' }],
   },
   '/services/websites-digital-experiences': {
@@ -134,6 +138,7 @@ export const TASK4_SERVICE_CONTENT = {
     },
     media: { key: 'digitalDashboard', runtimePath: '/media/fnb/capabilities/digital-dashboard.png', sectionKey: 'web', mediaPosition: 'end', mediaAspect: 'portrait', rhythm: 'middle', disclosure: conceptualDisclosure, boundary: 'This conceptual interface is not a delivered client product, live dashboard or evidence of deployment.' },
     cta: { id: 'project-enquiry', eyebrow: 'Digital enquiry', title: 'Start with the user, the content and the decision.', copy: 'Share the audience, essential journeys, available content, brand inputs and known technical constraints. Delivery scope remains subject to discovery and approval.', label: 'Start a digital enquiry', href: commonCtaHref },
+    runtimeBoundaries: [{ sectionKey: 'strategy', source: 'aside' }, { sectionKey: 'web', source: 'media-boundary' }],
     composition: [{ primitive: 'hero' }, { primitive: 'editorial', sectionKey: 'strategy' }, { primitive: 'flow', sectionKey: 'ux' }, { primitive: 'editorial', sectionKey: 'ui' }, { primitive: 'media-feature', sectionKey: 'web', mediaPosition: 'end', mediaAspect: 'portrait', rhythm: 'middle' }, { primitive: 'editorial', sectionKey: 'storytelling' }, { primitive: 'scope-list', sectionKey: 'responsive' }, { primitive: 'editorial', sectionKey: 'conversion' }, { primitive: 'editorial', sectionKey: 'consistency' }, { primitive: 'cta' }],
   },
   '/services/automation-systems': {
@@ -151,6 +156,7 @@ export const TASK4_SERVICE_CONTENT = {
     },
     media: { key: 'automationAnalytics', runtimePath: '/media/fnb/capabilities/automation-analytics.png', sectionKey: 'integration', mediaPosition: 'start', mediaAspect: 'portrait', rhythm: 'early', disclosure: conceptualDisclosure, boundary: 'The interface shown is conceptual capability imagery, not a deployed analytics product or verified operational result.' },
     cta: { id: 'project-enquiry', eyebrow: 'Systems enquiry', title: 'Start with the workflow your team can describe.', copy: 'Share the current trigger, actors, handoffs, known systems and exception cases. Any implementation scope follows discovery, access review and technical approval.', label: 'Start a systems enquiry', href: commonCtaHref },
+    runtimeBoundaries: [{ sectionKey: 'discovery', source: 'aside' }, { sectionKey: 'integration', source: 'media-boundary' }],
     composition: [{ primitive: 'hero' }, { primitive: 'split', sectionKey: 'discovery' }, { primitive: 'editorial', sectionKey: 'mapping' }, { primitive: 'media-feature', sectionKey: 'integration', mediaPosition: 'start', mediaAspect: 'portrait', rhythm: 'early' }, { primitive: 'editorial', sectionKey: 'customer' }, { primitive: 'scope-list', sectionKey: 'operational' }, { primitive: 'editorial', sectionKey: 'data' }, { primitive: 'editorial', sectionKey: 'controls' }, { primitive: 'cta' }],
   },
   '/services/ai-workflow-solutions': {
@@ -168,6 +174,7 @@ export const TASK4_SERVICE_CONTENT = {
     },
     media: { key: 'aiPavilion', runtimePath: '/media/fnb/capabilities/ai-pavilion.png', sectionKey: 'orchestration', mediaPosition: 'end', mediaAspect: 'landscape', rhythm: 'early', disclosure: conceptualDisclosure, boundary: 'The pavilion visualization is conceptual capability imagery—not a deployed AI product, interface or client implementation.' },
     cta: { id: 'project-enquiry', eyebrow: 'AI workflow enquiry', title: 'Start with one bounded task and its human owner.', copy: 'Share the current workflow, source information, decision owner, risk context and expected review point. A proposed system follows discovery and evaluation.', label: 'Start an AI workflow enquiry', href: commonCtaHref },
+    runtimeBoundaries: [{ sectionKey: 'strategy', source: 'aside' }, { sectionKey: 'governance', source: 'aside' }],
     composition: [{ primitive: 'hero' }, { primitive: 'editorial', sectionKey: 'strategy' }, { primitive: 'media-feature', sectionKey: 'orchestration', mediaPosition: 'end', mediaAspect: 'landscape', rhythm: 'early' }, { primitive: 'scope-list', sectionKey: 'knowledge' }, { primitive: 'editorial', sectionKey: 'review' }, { primitive: 'editorial', sectionKey: 'governance' }, { primitive: 'editorial', sectionKey: 'intelligence' }, { primitive: 'editorial', sectionKey: 'integration' }, { primitive: 'cta' }],
   },
   '/services/interiors-commercial-spaces': {
@@ -185,6 +192,7 @@ export const TASK4_SERVICE_CONTENT = {
     },
     media: { key: 'interiorsLobby', runtimePath: '/media/fnb/capabilities/interiors-lobby.png', sectionKey: 'materials', mediaPosition: 'start', mediaAspect: 'landscape', rhythm: 'early', disclosure: conceptualDisclosure, boundary: 'This approved conceptual interior is not project evidence. Final materials and assemblies require specification, samples and qualified technical review.' },
     cta: { id: 'project-enquiry', eyebrow: 'Interiors enquiry', title: 'Start with the site, the users and the operating need.', copy: 'Share available drawings, location, intended use, brand inputs, programme and known building constraints. Scope follows verification of the actual site and approvals path.', label: 'Start an interiors enquiry', href: commonCtaHref },
+    runtimeBoundaries: [{ sectionKey: 'planning', source: 'aside' }, { sectionKey: 'execution', source: 'aside' }],
     composition: [{ primitive: 'hero' }, { primitive: 'flow', sectionKey: 'strategy' }, { primitive: 'editorial', sectionKey: 'planning' }, { primitive: 'media-feature', sectionKey: 'materials', mediaPosition: 'start', mediaAspect: 'landscape', rhythm: 'early' }, { primitive: 'editorial', sectionKey: 'brand' }, { primitive: 'scope-list', sectionKey: 'commercial' }, { primitive: 'editorial', sectionKey: 'development' }, { primitive: 'editorial', sectionKey: 'execution' }, { primitive: 'cta' }],
   },
 } as const satisfies Record<Task4ServiceRoute, Task4ServiceContent>
@@ -201,3 +209,31 @@ export function getTask4ServiceContent(route: Task4ServiceRoute): ApprovedTask4S
   assertApprovedTask4ServiceContent(content)
   return content
 }
+
+export function getTask4ServiceBlock(content: ApprovedTask4ServiceContent, index: number): string {
+  const entry = content.composition[index]
+  if (!entry) throw new Error(`Missing Task 4 composition block ${index} for ${content.route}`)
+  return entry.sectionKey ?? entry.primitive
+}
+
+export function getTask4RenderedComposition(content: ApprovedTask4ServiceContent) {
+  return content.composition.map((entry) => ({
+    block: entry.sectionKey ?? entry.primitive,
+    primitive: entry.primitive,
+    ...(entry.mediaPosition ? { mediaPosition: entry.mediaPosition } : {}),
+    ...(entry.mediaAspect ? { mediaAspect: entry.mediaAspect } : {}),
+    ...(entry.rhythm ? { rhythm: entry.rhythm } : {}),
+  }))
+}
+
+export function getTask4RuntimeBoundaryMarkers(content: ApprovedTask4ServiceContent): string[] {
+  return content.runtimeBoundaries.map((boundary) => {
+    const section = content.sections[boundary.sectionKey]
+    if (!section) throw new Error(`Unknown boundary section ${boundary.sectionKey} for ${content.route}`)
+    if (boundary.source === 'aside' && section.aside) return section.aside
+    if (boundary.source === 'body' && section.body[boundary.paragraphIndex ?? 0]) return section.body[boundary.paragraphIndex ?? 0]
+    if (boundary.source === 'media-boundary' && content.media.boundary && content.media.sectionKey === boundary.sectionKey) return content.media.boundary
+    throw new Error(`Invalid boundary marker ${boundary.source} for ${content.route}/${boundary.sectionKey}`)
+  })
+}
+import type { ServiceHref } from '@/lib/site-registry'

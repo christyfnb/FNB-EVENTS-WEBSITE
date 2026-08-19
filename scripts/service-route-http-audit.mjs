@@ -1,5 +1,5 @@
 import { pathToFileURL } from 'node:url'
-import { TASK4_SERVICE_ROUTES, getTask4ServiceContent } from '../lib/task4-service-content.ts'
+import { TASK4_SERVICE_ROUTES, getTask4RenderedComposition, getTask4RuntimeBoundaryMarkers, getTask4ServiceContent } from '../lib/task4-service-content.ts'
 
 function decodeHtml(value) {
   return value
@@ -18,6 +18,21 @@ export function auditServiceRouteHtml({ status, html, expected }) {
   const h1Matches = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)]
   const h1Text = h1Matches[0] ? decodeHtml(h1Matches[0][1]) : ''
   const encodedMediaPath = encodeURIComponent(expected.mediaPath)
+  const attribute = (source, name) => source.match(new RegExp(`\\b${name}=["']([^"']+)["']`, 'i'))?.[1]
+  const renderedComposition = [...html.matchAll(/<[a-z][\w-]*\b([^>]*\bdata-service-block=["'][^"']+["'][^>]*)>/gi)].map((match) => {
+    const attributes = match[1]
+    const mediaPosition = attribute(attributes, 'data-media-position')
+    const mediaAspect = attribute(attributes, 'data-media-aspect')
+    const rhythm = attribute(attributes, 'data-media-rhythm')
+    return {
+      block: attribute(attributes, 'data-service-block'),
+      primitive: attribute(attributes, 'data-service-kind'),
+      ...(mediaPosition ? { mediaPosition } : {}),
+      ...(mediaAspect ? { mediaAspect } : {}),
+      ...(rhythm ? { rhythm } : {}),
+    }
+  })
+  const renderedBoundaryTexts = [...html.matchAll(/<(?:aside|p)\b[^>]*\bdata-truth-boundary=["'][^"']+["'][^>]*>([\s\S]*?)<\/(?:aside|p)>/gi)].map((match) => decodeHtml(match[1]))
 
   if (status !== 200) failures.push(`${expected.route}: expected status 200, received ${status}`)
   if (mainCount !== 1) failures.push(`${expected.route}: expected one main landmark, found ${mainCount}`)
@@ -26,6 +41,10 @@ export function auditServiceRouteHtml({ status, html, expected }) {
   if (!html.includes(expected.mediaPath) && !html.includes(encodedMediaPath)) failures.push(`${expected.route}: assigned media is absent`)
   if (!html.includes(expected.disclosure)) failures.push(`${expected.route}: truth disclosure is absent`)
   if (!new RegExp(`href=["']${expected.ctaHref}["']`).test(html)) failures.push(`${expected.route}: canonical CTA is absent`)
+  if (JSON.stringify(renderedComposition) !== JSON.stringify(expected.composition)) failures.push(`${expected.route}: rendered block order or primitive/media rhythm differs from the approved composition`)
+  for (const marker of expected.boundaryMarkers ?? []) {
+    if (!renderedBoundaryTexts.includes(marker)) failures.push(`${expected.route}: approved boundary marker is absent from rendered boundary content`)
+  }
   return failures
 }
 
@@ -35,7 +54,15 @@ export async function auditTask4ServiceRoutes(baseUrl, fetchImpl = fetch) {
     const content = getTask4ServiceContent(route)
     const response = await fetchImpl(new URL(route, baseUrl))
     const html = await response.text()
-    const expected = { route, h1: content.hero.title, mediaPath: content.media.runtimePath, ctaHref: content.cta.href, disclosure: content.media.disclosure }
+    const expected = {
+      route,
+      h1: content.hero.title,
+      mediaPath: content.media.runtimePath,
+      ctaHref: content.cta.href,
+      disclosure: content.media.disclosure,
+      composition: getTask4RenderedComposition(content),
+      boundaryMarkers: getTask4RuntimeBoundaryMarkers(content),
+    }
     results.push({ route, status: response.status, failures: auditServiceRouteHtml({ status: response.status, html, expected }) })
   }
   return results

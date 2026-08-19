@@ -7,11 +7,12 @@ type ProjectEnquiryCtaProps = {
   copy: string
   linkLabel?: string
   href?: '/project-enquiry'
+  serviceBlock?: string
 }
 
-export function ProjectEnquiryCta({ id = 'project-enquiry', eyebrow = 'Next move', title, copy, linkLabel = 'Start a project', href = '/project-enquiry' }: ProjectEnquiryCtaProps) {
+export function ProjectEnquiryCta({ id = 'project-enquiry', eyebrow = 'Next move', title, copy, linkLabel = 'Start a project', href = '/project-enquiry', serviceBlock }: ProjectEnquiryCtaProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-heading`} className="border-t border-signal/40 bg-void">
+    <section id={id} aria-labelledby={`${id}-heading`} data-service-block={serviceBlock} data-service-kind={serviceBlock ? 'cta' : undefined} className="border-t border-signal/40 bg-void">
       <div className="mx-auto max-w-[1600px] px-5 py-20 md:px-10 md:py-28">
         <p className="fnb-label text-signal">{eyebrow}</p>
         <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.42fr)] lg:items-end">

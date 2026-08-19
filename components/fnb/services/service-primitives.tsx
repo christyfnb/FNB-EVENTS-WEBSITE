@@ -56,6 +56,8 @@ type ServiceMediaFeatureProps = {
   portrait?: boolean
   boundary?: string
   disclosure?: string
+  serviceBlock?: string
+  rhythm?: 'early' | 'middle' | 'late'
 }
 
 export function ServiceMediaFeature({
@@ -68,16 +70,18 @@ export function ServiceMediaFeature({
   portrait = false,
   boundary,
   disclosure,
+  serviceBlock,
+  rhythm,
 }: ServiceMediaFeatureProps) {
   const headingId = `${id}-heading`
   return (
-    <section id={id} aria-labelledby={headingId} className="border-t border-steel/40 bg-void">
+    <section id={id} aria-labelledby={headingId} data-service-block={serviceBlock} data-service-kind={serviceBlock ? 'media-feature' : undefined} data-media-position={serviceBlock ? mediaPosition : undefined} data-media-aspect={serviceBlock ? (portrait ? 'portrait' : 'landscape') : undefined} data-media-rhythm={serviceBlock ? rhythm : undefined} className="border-t border-steel/40 bg-void">
       <div className="mx-auto grid max-w-[1600px] gap-10 px-5 py-16 md:px-10 md:py-24 lg:grid-cols-[minmax(0,0.78fr)_minmax(22rem,1fr)] lg:items-center lg:gap-16">
         <div className={mediaPosition === 'start' ? 'lg:order-2' : undefined}>
           <p className="fnb-label text-signal">{index}</p>
           <h2 id={headingId} className="fnb-head mt-5 max-w-[13ch] text-3xl text-warm-white md:text-5xl">{title}</h2>
           <div className="mt-6 max-w-2xl space-y-5 text-base leading-relaxed text-mist md:text-lg">{children}</div>
-          {boundary ? <p className="mt-7 border-l border-signal/60 pl-5 text-sm leading-relaxed text-ash">{boundary}</p> : null}
+          {boundary ? <p data-truth-boundary={serviceBlock ? `${serviceBlock}:media` : undefined} className="mt-7 border-l border-signal/60 pl-5 text-sm leading-relaxed text-ash">{boundary}</p> : null}
         </div>
         <ConceptualMedia
           asset={asset}
@@ -96,11 +100,12 @@ type RelatedServicesProps = {
   linkLabel?: string
   title: string
   items: readonly { number: string; name: string; href: ServiceHref }[]
+  serviceBlock?: string
 }
 
-export function RelatedServices({ id = 'related-services', label = 'Related services', linkLabel = 'Explore', title, items }: RelatedServicesProps) {
+export function RelatedServices({ id = 'related-services', label = 'Related services', linkLabel = 'Explore', title, items, serviceBlock }: RelatedServicesProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-heading`} className="border-t border-steel/40 bg-obsidian">
+    <section id={id} aria-labelledby={`${id}-heading`} data-service-block={serviceBlock} data-service-kind={serviceBlock ? 'related-services' : undefined} className="border-t border-steel/40 bg-obsidian">
       <div className="mx-auto max-w-[1600px] px-5 py-16 md:px-10 md:py-24">
         <p className="fnb-label text-signal">{label}</p>
         <h2 id={`${id}-heading`} className="fnb-head mt-5 max-w-[16ch] text-3xl text-warm-white md:text-5xl">{title}</h2>
