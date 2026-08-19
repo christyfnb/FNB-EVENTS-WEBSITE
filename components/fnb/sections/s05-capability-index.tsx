@@ -15,6 +15,7 @@ import { CAPABILITIES } from '@/lib/content'
  */
 export function S05CapabilityIndex() {
   const [focused, setFocused] = useState(0)
+  const activeCapability = CAPABILITIES[focused]
 
   return (
     <section id="s05-capabilities" aria-labelledby="s05-heading" className="border-t border-steel/40 bg-obsidian">
@@ -75,23 +76,16 @@ export function S05CapabilityIndex() {
           <div className="hidden w-[38%] lg:block">
             <div className="sticky top-24">
               <div className="relative aspect-[16/10] w-full overflow-hidden">
-                {CAPABILITIES.map((cap, i) => (
-                  <div
-                    key={cap.number}
-                    aria-hidden={focused !== i}
-                    className={`absolute inset-0 transition-opacity duration-[320ms] ease-out ${
-                      focused === i ? 'opacity-100' : 'opacity-0'
-                    }`}
-                  >
-                    <MediaSlot
-                      asset={cap.image}
-                      className="h-full w-full"
-                      sizes="38vw"
-                    />
-                  </div>
-                ))}
+                <div key={activeCapability.number} aria-hidden="true" className="absolute inset-0 animate-in fade-in duration-300">
+                  <MediaSlot
+                    asset={activeCapability.image}
+                    className="h-full w-full"
+                    sizes="38vw"
+                    decorative
+                  />
+                </div>
               </div>
-              <p className="fnb-label mt-4 text-ash">{CAPABILITIES[focused].cluster}</p>
+              <p className="fnb-label mt-4 text-ash">{activeCapability.cluster}</p>
             </div>
           </div>
         </div>

@@ -8,6 +8,14 @@ const INVENTORY_PATH = 'data/media/source-inventory.json'
 const DENYLIST_PATH = 'data/media/prohibited-sha256.json'
 const RUNTIME_PATH = 'data/media/runtime-media.json'
 const RUNTIME_ROOT = 'public/media/fnb'
+const EXPECTED_RUNTIME_ENTRIES = 35
+const ELIGIBLE_SOURCE_STATUSES = new Set(['source-eligible', 'source-eligible-portrait'])
+const TRUTH_CLASSIFICATIONS = new Set([
+  'official-brand-asset',
+  'conceptual-generated-capability-imagery',
+  'conceptual-generated-interface-imagery',
+  'approved-portrait-media-metadata-gated',
+])
 
 function readJson(root, path, errors) {
   const absolutePath = join(root, path)
@@ -17,7 +25,12 @@ function readJson(root, path, errors) {
   }
 
   try {
-    return JSON.parse(readFileSync(absolutePath, 'utf8'))
+    const value = JSON.parse(readFileSync(absolutePath, 'utf8'))
+    if (!Array.isArray(value)) {
+      errors.push(`Expected a JSON array in ${path}`)
+      return []
+    }
+    return value
   } catch (error) {
     errors.push(`Invalid JSON in ${path}: ${error.message}`)
     return []
@@ -36,24 +49,25 @@ function sha256(path) {
   return createHash('sha256').update(readFileSync(path)).digest('hex')
 }
 
-export function auditMedia(root = DEFAULT_ROOT) {
+export function auditMediaRecords({ inventory, denylist, runtime }) {
   const errors = []
-  const inventory = readJson(root, INVENTORY_PATH, errors)
-  const denylist = readJson(root, DENYLIST_PATH, errors)
-  const runtime = readJson(root, RUNTIME_PATH, errors)
-  const runtimeRoot = join(root, RUNTIME_ROOT)
-
-  if (inventory.length !== 76) errors.push(`Expected 76 source inventory entries; found ${inventory.length}`)
-  if (denylist.length !== 26) errors.push(`Expected 26 prohibited hashes; found ${denylist.length}`)
-
-  const inventoryPaths = new Set()
+  const inventoryByPath = new Map()
   const inventoryHashes = new Set()
+
+  if (runtime.length !== EXPECTED_RUNTIME_ENTRIES) {
+    errors.push(`Expected exactly ${EXPECTED_RUNTIME_ENTRIES} runtime manifest entries; found ${runtime.length}`)
+  }
+
   for (const item of inventory) {
-    if (!item.sourcePath || inventoryPaths.has(item.sourcePath)) errors.push(`Duplicate or missing sourcePath: ${item.sourcePath ?? '<missing>'}`)
-    inventoryPaths.add(item.sourcePath)
+    if (!item.sourcePath || inventoryByPath.has(item.sourcePath)) {
+      errors.push(`Duplicate or missing sourcePath: ${item.sourcePath ?? '<missing>'}`)
+    } else {
+      inventoryByPath.set(item.sourcePath, item)
+    }
     if (!Number.isInteger(item.width) || item.width <= 0 || !Number.isInteger(item.height) || item.height <= 0) {
       errors.push(`Invalid decoded dimensions for ${item.sourcePath ?? '<missing>'}`)
     }
+    if (!Number.isInteger(item.bytes) || item.bytes <= 0) errors.push(`Invalid source byte size for ${item.sourcePath ?? '<missing>'}`)
     if (!/^[a-f0-9]{64}$/.test(item.sha256 ?? '')) errors.push(`Invalid source SHA-256 for ${item.sourcePath ?? '<missing>'}`)
     inventoryHashes.add(item.sha256)
   }
@@ -72,18 +86,68 @@ export function auditMedia(root = DEFAULT_ROOT) {
   const runtimeHashes = new Set()
   let portraitCount = 0
   for (const item of runtime) {
-    if (!item.id || !item.sourcePath || !item.runtimePath) errors.push(`Runtime registry entry is missing required identity fields: ${JSON.stringify(item)}`)
-    if (!inventoryPaths.has(item.sourcePath)) errors.push(`Runtime source is absent from inventory: ${item.sourcePath}`)
+    if (!item.id || !item.sourcePath || !item.runtimePath) {
+      errors.push(`Runtime registry entry is missing required identity fields: ${JSON.stringify(item)}`)
+    }
+    const source = inventoryByPath.get(item.sourcePath)
+    if (!source) {
+      errors.push(`Runtime source is absent from inventory: ${item.sourcePath}`)
+    } else {
+      if (source.sourceEligibility && !ELIGIBLE_SOURCE_STATUSES.has(source.sourceEligibility)) {
+        errors.push(`Runtime source is not eligible: ${item.id} (${source.sourceEligibility})`)
+      }
+      if (item.sha256 !== source.sha256) errors.push(`Runtime SHA-256 does not match declared source: ${item.id}`)
+      if (item.width !== source.width || item.height !== source.height) {
+        errors.push(`Runtime dimensions do not match declared source: ${item.id}`)
+      }
+      if (item.bytes !== source.bytes) errors.push(`Runtime byte size does not match declared source: ${item.id}`)
+      if (item.aspectRatio !== undefined && source.aspectRatio !== undefined && item.aspectRatio !== source.aspectRatio) {
+        errors.push(`Runtime aspect ratio does not match declared source: ${item.id}`)
+      }
+    }
+
     if (runtimePaths.has(item.runtimePath)) errors.push(`Duplicate runtime path in registry: ${item.runtimePath}`)
     runtimePaths.add(item.runtimePath)
     if (runtimeHashes.has(item.sha256)) errors.push(`Byte-identical runtime registry entry: ${item.sha256}`)
     runtimeHashes.add(item.sha256)
     if (prohibitedHashes.has(item.sha256)) errors.push(`Runtime registry contains prohibited hash: ${item.sha256}`)
-    if (item.sourcePath.includes('/14-Team/02-Master/')) errors.push(`Team master registered for runtime: ${item.sourcePath}`)
-    if (item.sourcePath.includes('/14-Team/01-Web-Optimized/')) portraitCount += 1
+    if (item.sourcePath?.includes('/14-Team/02-Master/')) errors.push(`Team master registered for runtime: ${item.sourcePath}`)
+    if (item.sourcePath?.includes('/14-Team/01-Web-Optimized/')) portraitCount += 1
     if (item.publicationStatus !== 'approved-for-runtime') errors.push(`Unapproved runtime entry: ${item.id}`)
-    if (!item.truthClassification || !item.brandApprovalStatus) errors.push(`Missing governance metadata: ${item.id}`)
+    if (!TRUTH_CLASSIFICATIONS.has(item.truthClassification)) {
+      errors.push(`Unsupported truth classification: ${item.id} (${item.truthClassification ?? '<missing>'})`)
+    }
+    if (!item.brandApprovalStatus) errors.push(`Missing brand approval status: ${item.id}`)
+  }
 
+  return {
+    errors,
+    inventoryByPath,
+    prohibitedHashes,
+    runtimePaths,
+    counts: {
+      sourceInventory: inventory.length,
+      prohibitedHashes: denylist.length,
+      runtimeEntries: runtime.length,
+      portraits: portraitCount,
+    },
+  }
+}
+
+export function auditMedia(root = DEFAULT_ROOT) {
+  const manifestErrors = []
+  const inventory = readJson(root, INVENTORY_PATH, manifestErrors)
+  const denylist = readJson(root, DENYLIST_PATH, manifestErrors)
+  const runtime = readJson(root, RUNTIME_PATH, manifestErrors)
+  const recordAudit = auditMediaRecords({ inventory, denylist, runtime })
+  const errors = [...manifestErrors, ...recordAudit.errors]
+  const runtimeRoot = join(root, RUNTIME_ROOT)
+
+  if (inventory.length !== 76) errors.push(`Expected 76 source inventory entries; found ${inventory.length}`)
+  if (denylist.length !== 26) errors.push(`Expected 26 prohibited hashes; found ${denylist.length}`)
+  if (recordAudit.counts.portraits !== 23) errors.push(`Expected all 23 web-optimized portraits; found ${recordAudit.counts.portraits}`)
+
+  for (const item of runtime) {
     const diskPath = join(root, 'public', item.runtimePath.replace(/^\//, ''))
     if (!existsSync(diskPath)) {
       errors.push(`Missing runtime file: ${item.runtimePath}`)
@@ -92,16 +156,15 @@ export function auditMedia(root = DEFAULT_ROOT) {
     if (statSync(diskPath).size !== item.bytes) errors.push(`Byte-size mismatch: ${item.runtimePath}`)
     const diskHash = sha256(diskPath)
     if (diskHash !== item.sha256) errors.push(`SHA-256 mismatch: ${item.runtimePath}`)
-    if (prohibitedHashes.has(diskHash)) errors.push(`Runtime file matches prohibited content: ${item.runtimePath}`)
+    if (recordAudit.prohibitedHashes.has(diskHash)) errors.push(`Runtime file matches prohibited content: ${item.runtimePath}`)
   }
-  if (portraitCount !== 23) errors.push(`Expected all 23 web-optimized portraits; found ${portraitCount}`)
 
   const diskFiles = walkFiles(runtimeRoot).filter((path) => ['.jpg', '.jpeg', '.png', '.webp', '.avif'].includes(extname(path).toLowerCase()))
   const diskPaths = new Set(diskFiles.map((path) => `/${relative(join(root, 'public'), path).replaceAll('\\', '/')}`))
   for (const path of diskPaths) {
-    if (!runtimePaths.has(path)) errors.push(`Unregistered runtime media: ${path}`)
+    if (!recordAudit.runtimePaths.has(path)) errors.push(`Unregistered runtime media: ${path}`)
   }
-  for (const path of runtimePaths) {
+  for (const path of recordAudit.runtimePaths) {
     if (!diskPaths.has(path)) errors.push(`Registered runtime media absent from disk: ${path}`)
   }
 
@@ -113,11 +176,8 @@ export function auditMedia(root = DEFAULT_ROOT) {
   return {
     errors,
     counts: {
-      sourceInventory: inventory.length,
-      prohibitedHashes: denylist.length,
-      runtimeEntries: runtime.length,
+      ...recordAudit.counts,
       runtimeFiles: diskFiles.length,
-      portraits: portraitCount,
     },
   }
 }
