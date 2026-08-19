@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import type { CanonicalHref, NavigationHref } from '@/lib/site-registry'
+import type { CanonicalHref, NavigationHref, ServiceHref } from '@/lib/site-registry'
 
-type ImplementedHref = '/' | '/services' | '/services/exhibition-booth-design-build'
+type ImplementedHref = '/' | '/services' | ServiceHref
 type HoldingHref = Exclude<CanonicalHref, ImplementedHref>
 
 export type HoldingPageContent = {
@@ -14,18 +14,8 @@ export type HoldingPageContent = {
   primaryHref: NavigationHref
 }
 
-const serviceStatus = 'Full service narrative scheduled for the next implementation task.'
-const serviceNotice = 'This route is available now. Detailed scope, imagery and production language remain deliberately unpublished until the dedicated service-page pass.'
-
 const HOLDING_PAGES = {
   '/about': { eyebrow: 'About · Publication gateway', title: 'Future Next Branding, in context.', summary: 'FNB brings strategy, design, engineering, production and digital thinking into one connected practice.', status: 'Expanded institutional narrative pending the dedicated About implementation.', notice: 'No history, awards, project counts, locations or other unverified company claims are published here.', primaryLabel: 'Explore services', primaryHref: '/services' },
-  '/services/event-production': { eyebrow: 'Service 02 · Event Production', title: 'Event Production', summary: 'Planning, direction, staging and technical coordination shaped around one live experience.', status: serviceStatus, notice: serviceNotice, primaryLabel: 'All services', primaryHref: '/services' },
-  '/services/branding-advertising': { eyebrow: 'Service 03 · Branding & Advertising', title: 'Branding & Advertising', summary: 'Brand systems and campaign thinking translated across physical and digital surfaces.', status: serviceStatus, notice: serviceNotice, primaryLabel: 'All services', primaryHref: '/services' },
-  '/services/technical-production': { eyebrow: 'Service 04 · Technical Production', title: 'Technical Production', summary: 'Technical planning and show integration for coherent, controlled event environments.', status: serviceStatus, notice: 'No equipment inventory, technical metric or delivery proof is implied. Full service content is scheduled for the dedicated implementation task.', primaryLabel: 'All services', primaryHref: '/services' },
-  '/services/websites-digital-experiences': { eyebrow: 'Service 05 · Digital Experiences', title: 'Websites & Digital Experiences', summary: 'Responsive digital experiences that carry the same brand intent beyond physical space.', status: serviceStatus, notice: 'No generated interface is represented as a delivered client project. Full service content is scheduled for the dedicated implementation task.', primaryLabel: 'All services', primaryHref: '/services' },
-  '/services/automation-systems': { eyebrow: 'Service 06 · Automation Systems', title: 'Automation Systems', summary: 'Workflow mapping and system connections designed around clear human controls.', status: serviceStatus, notice: 'No efficiency metric, integration destination or operational result is claimed. Full service content follows in the dedicated implementation task.', primaryLabel: 'All services', primaryHref: '/services' },
-  '/services/ai-workflow-solutions': { eyebrow: 'Service 07 · AI Workflow Solutions', title: 'AI Workflow Solutions', summary: 'AI-assisted workflow design with governance, review and business context kept visible.', status: serviceStatus, notice: 'No proprietary model, performance result or unsupported AI claim is published. Full service content follows in the dedicated implementation task.', primaryLabel: 'All services', primaryHref: '/services' },
-  '/services/interiors-commercial-spaces': { eyebrow: 'Service 08 · Interiors', title: 'Interiors & Commercial Spaces', summary: 'Spatial strategy, functional planning and brand integration for enduring environments.', status: serviceStatus, notice: serviceNotice, primaryLabel: 'All services', primaryHref: '/services' },
   '/industries': { eyebrow: 'Industries · Capability gateway', title: 'Designed around constraints, not borrowed proof.', summary: 'The future Industries page will frame how disciplines respond to sector-specific constraints without implying unverified historical experience.', status: 'Industry evidence and publication wording remain under review.', notice: 'No sector history, named client or delivered project is published here.', primaryLabel: 'Explore services', primaryHref: '/services' },
   '/process': { eyebrow: 'Process · Route gateway', title: 'From discovery to delivery.', summary: 'The homepage retains the current process overview while the expanded process narrative is prepared.', status: 'Full process page scheduled for the institutional-route implementation task.', notice: 'Only approved capability language is shown; unverified methodology claims remain unpublished.', primaryLabel: 'Homepage process', primaryHref: '/#process' },
   '/team': { eyebrow: 'Team · Data review', title: 'People, pending publication review.', summary: 'The team composition will be published after identity, role, consent and portrait metadata are cleared together.', status: 'Team publication data is not yet approved.', notice: 'No names, roles or biographies are inferred from filenames or unpublished source material.', primaryLabel: 'Explore services', primaryHref: '/services' },

@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "audit:media": "node scripts/media-audit.mjs",
     "test:media": "node --test tests/media-audit.test.mjs",
+    "test:services": "node --test tests/service-routes.test.mjs",
     "test:routes": "node --test tests/route-architecture.test.mjs"
   },
   "dependencies": {
