@@ -1,8 +1,20 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { BUILD_STAGES } from '@/lib/content'
+
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+
+function subscribeToReducedMotion(onStoreChange: () => void) {
+  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY)
+  mediaQuery.addEventListener('change', onStoreChange)
+  return () => mediaQuery.removeEventListener('change', onStoreChange)
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches
+}
 
 /**
  * S04 EXHIBITION TRANSFORMATION — ScrollStory, TRUE PIN.
@@ -22,19 +34,10 @@ import { BUILD_STAGES } from '@/lib/content'
 export function S04ExhibitionTransformation() {
   const trackRef = useRef<HTMLDivElement>(null)
   const [stage, setStage] = useState(0)
-  const [reduced, setReduced] = useState(false)
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReduced(mq.matches)
-    const onChange = (e: MediaQueryListEvent) => setReduced(e.matches)
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
+  const reduced = useSyncExternalStore(subscribeToReducedMotion, getReducedMotionSnapshot, () => false)
 
   useEffect(() => {
     if (reduced) {
-      setStage(BUILD_STAGES.length - 1)
       return
     }
     let raf = 0
@@ -58,7 +61,7 @@ export function S04ExhibitionTransformation() {
     }
   }, [reduced])
 
-  const s = stage
+  const s = reduced ? BUILD_STAGES.length - 1 : stage
 
   return (
     <section id="s04-transformation" aria-labelledby="s04-heading" className="border-t border-steel/40 bg-void">
