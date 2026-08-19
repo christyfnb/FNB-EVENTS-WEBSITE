@@ -183,6 +183,8 @@ test('Task 3 routes and the complete exhibition narrative are present', async ()
     read('app/services/page.tsx'),
     read('app/services/exhibition-booth-design-build/page.tsx'),
   ])
+  const { getTask4ServiceContent } = await import('../lib/task4-service-content.ts')
+  const exhibitionContent = getTask4ServiceContent('/services/exhibition-booth-design-build')
   assert.match(services, /SERVICE_REGISTRY/)
   assert.doesNotMatch(services, /rounded-(?:lg|xl|2xl|3xl|full)/)
 
@@ -200,8 +202,14 @@ test('Task 3 routes and the complete exhibition narrative are present', async ()
     'related-capabilities',
     'project-enquiry',
   ]
-  for (const id of requiredNarrative) assert.match(exhibition, new RegExp(`id=["']${id}["']`))
-  assert.match(exhibition, /conceptual capability imagery/i)
+  const registeredIds = [
+    ...Object.values(exhibitionContent.sections).map((section) => section.id),
+    exhibitionContent.related.id,
+    exhibitionContent.cta.id,
+  ]
+  assert.deepEqual(registeredIds, requiredNarrative)
+  assert.match(exhibitionContent.media.disclosure, /conceptual capability imagery/i)
+  assert.match(exhibition, /getTask4ServiceContent/)
 })
 
 test('conceptual imagery disclosure remains complete and visible at every breakpoint', async () => {

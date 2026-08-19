@@ -7,11 +7,12 @@ type EditorialHeroProps = {
   title: string
   lead: string
   media?: MediaAsset
+  mediaDisclosure?: string
   children?: ReactNode
   serviceBlock?: string
 }
 
-export function EditorialHero({ eyebrow, title, lead, media, children, serviceBlock }: EditorialHeroProps) {
+export function EditorialHero({ eyebrow, title, lead, media, mediaDisclosure, children, serviceBlock }: EditorialHeroProps) {
   return (
     <section aria-labelledby="page-heading" data-service-block={serviceBlock} data-service-kind={serviceBlock ? 'hero' : undefined} className="relative overflow-hidden border-b border-steel/50 bg-void pt-28 md:pt-36">
       <div className="pointer-events-none absolute inset-x-0 top-16 h-px bg-gradient-to-r from-transparent via-signal/70 to-transparent" />
@@ -25,7 +26,7 @@ export function EditorialHero({ eyebrow, title, lead, media, children, serviceBl
           {children ? <div className="mt-10">{children}</div> : null}
         </div>
         {media ? (
-          <ConceptualMedia asset={media} sizes="(min-width: 1024px) 44vw, 100vw" className="aspect-[4/3] lg:aspect-[5/6]" preload />
+          <ConceptualMedia asset={media} sizes="(min-width: 1024px) 44vw, 100vw" className="aspect-[4/3] lg:aspect-[5/6]" label={mediaDisclosure} preload />
         ) : (
           <div aria-hidden="true" className="hidden min-h-80 border-l border-steel/50 pl-8 lg:block">
             <div className="h-full border-y border-steel/30 bg-[linear-gradient(135deg,transparent_49.8%,var(--fnb-signal-trace)_50%,transparent_50.2%)]" />

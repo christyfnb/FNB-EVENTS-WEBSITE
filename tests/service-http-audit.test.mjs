@@ -5,7 +5,7 @@ import { auditServiceRouteHtml } from '../scripts/service-route-http-audit.mjs'
 const expected = {
   route: '/services/example',
   h1: 'Example Service',
-  mediaPath: '/media/fnb/capabilities/example.png',
+  mediaPaths: ['/media/fnb/capabilities/example-hero.png', '/media/fnb/capabilities/example.png'],
   ctaHref: '/project-enquiry',
   disclosure: 'Conceptual capability imagery — not project evidence',
   composition: [
@@ -17,7 +17,7 @@ const expected = {
   boundaryMarkers: ['Venue and qualified review remain required.'],
 }
 
-const validHtml = `<!doctype html><html><head><title>Example Service | FNB Events</title></head><body><main id="main"><section data-service-block="hero" data-service-kind="hero"><h1>Example Service</h1></section><section data-service-block="intro" data-service-kind="editorial"><p data-truth-boundary="intro:aside">Venue and qualified review remain required.</p></section><section data-service-block="visual" data-service-kind="media-feature" data-media-position="end" data-media-aspect="landscape" data-media-rhythm="early"><img src="/media/fnb/capabilities/example.png" alt="Conceptual example"><figcaption>Conceptual capability imagery — not project evidence</figcaption></section><section data-service-block="cta" data-service-kind="cta"><a href="/project-enquiry">Start a project</a></section></main></body></html>`
+const validHtml = `<!doctype html><html><head><title>Example Service | FNB Events</title></head><body><main id="main"><section data-service-block="hero" data-service-kind="hero"><h1>Example Service</h1><img src="/media/fnb/capabilities/example-hero.png" alt="Conceptual hero"></section><section data-service-block="intro" data-service-kind="editorial"><p data-truth-boundary="intro:aside">Venue and qualified review remain required.</p></section><section data-service-block="visual" data-service-kind="media-feature" data-media-position="end" data-media-aspect="landscape" data-media-rhythm="early"><img src="/media/fnb/capabilities/example.png" alt="Conceptual example"><figcaption>Conceptual capability imagery — not project evidence</figcaption></section><section data-service-block="cta" data-service-kind="cta"><a href="/project-enquiry">Start a project</a></section></main></body></html>`
 
 test('built-route HTTP audit accepts the complete controlled contract', () => {
   assert.deepEqual(auditServiceRouteHtml({ status: 200, html: validHtml, expected }), [])
@@ -42,4 +42,9 @@ test('built-route HTTP audit rejects the wrong rendered primitive order', () => 
 test('built-route HTTP audit rejects a missing approved boundary marker', () => {
   const failures = auditServiceRouteHtml({ status: 200, html: validHtml.replace('Venue and qualified review remain required.', ''), expected })
   assert.ok(failures.some((failure) => /boundary marker/i.test(failure)))
+})
+
+test('built-route HTTP audit rejects an absent secondary assigned media record', () => {
+  const failures = auditServiceRouteHtml({ status: 200, html: validHtml.replace('/media/fnb/capabilities/example-hero.png', ''), expected })
+  assert.ok(failures.some((failure) => /assigned media/i.test(failure)))
 })

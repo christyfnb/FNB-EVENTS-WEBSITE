@@ -7,6 +7,7 @@ const root = process.cwd()
 const read = (relativePath) => readFile(path.join(root, relativePath), 'utf8')
 
 const assignments = [
+  ['/services/exhibition-booth-design-build', 'boothBuild'],
   ['/services/event-production', 'eventKeynote'],
   ['/services/branding-advertising', 'brandingLobby'],
   ['/services/technical-production', 'technicalControl'],
@@ -18,8 +19,8 @@ const assignments = [
 
 const pageFileForRoute = (route) => `app${route}/page.tsx`
 
-test('Task 4 content registry gates every rendered record by explicit publication status and truth basis', async () => {
-  const { TASK4_SERVICE_ROUTES, getTask4ServiceContent, assertApprovedTask4ServiceContent } = await import('../lib/task4-service-content.ts')
+test('all eight deep-service records are gated by explicit publication status and truth basis', async () => {
+  const { TASK4_SERVICE_ROUTES, getTask4ServiceContent, assertApprovedTask4ServiceContent, getTask4RuntimeBoundaryMarkers } = await import('../lib/task4-service-content.ts')
   assert.deepEqual(TASK4_SERVICE_ROUTES, assignments.map(([route]) => route))
 
   for (const [route, mediaKey] of assignments) {
@@ -38,12 +39,22 @@ test('Task 4 content registry gates every rendered record by explicit publicatio
   const blocked = { ...getTask4ServiceContent(assignments[0][0]), publicationStatus: 'blocked' }
   assert.throws(() => assertApprovedTask4ServiceContent(blocked), /not approved for publication/i)
 
+  const exhibition = getTask4ServiceContent('/services/exhibition-booth-design-build')
+  assert.equal(exhibition.heroMedia.key, 'exhibitionStudio')
+  assert.equal(exhibition.media.key, 'boothBuild')
+  assert.match(getTask4RuntimeBoundaryMarkers(exhibition).join(' '), /qualified.+venue.+authority/i)
+  assert.deepEqual(exhibition.composition.map((entry) => entry.sectionKey ?? entry.primitive), [
+    'hero', 'strategicProposition', 'concept', 'sketchDesign', 'spatialPlanning', 'engineering',
+    'materialThinking', 'fabrication', 'buildProgression', 'installation', 'experienceDelivery',
+    'related-services', 'cta',
+  ])
+
   const event = getTask4ServiceContent('/services/event-production')
   assert.ok(event.related.items.some((item) => item.href === '/services/exhibition-booth-design-build'), 'Event Production must retain the Exhibition Booth related link')
   assert.match(await read('lib/task4-service-content.ts'), /href:\s*ServiceHref/)
 })
 
-test('all seven routes consume only their assigned approved registry record and contain no substantive inline copy or media selection', async () => {
+test('all eight routes consume only their assigned approved registry record and contain no substantive inline copy or media selection', async () => {
   for (const [route] of assignments) {
     const source = await read(pageFileForRoute(route))
     assert.match(source, /getTask4ServiceContent/)
@@ -53,7 +64,7 @@ test('all seven routes consume only their assigned approved registry record and 
     assert.match(source, /export const metadata: Metadata = content\.metadata/)
     assert.match(source, /<main id="main">/)
     assert.match(source, /<ProjectEnquiryCta/)
-    assert.match(source, /ServiceMediaFeature/)
+    if (route !== '/services/exhibition-booth-design-build') assert.match(source, /ServiceMediaFeature/)
   }
 })
 
@@ -77,7 +88,7 @@ test('registry composition signatures prove unique primitive order and media rhy
     assert.equal(signatures.has(structuralSignature), false, `${route} duplicates another primitive/media rhythm`)
     signatures.add(structuralSignature)
   }
-  assert.equal(signatures.size, 7)
+  assert.equal(signatures.size, 8)
 })
 
 test('conceptual media remains registry-bound and fully disclosed at every breakpoint', async () => {

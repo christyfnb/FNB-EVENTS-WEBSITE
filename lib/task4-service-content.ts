@@ -1,4 +1,5 @@
 export const TASK4_SERVICE_ROUTES = [
+  '/services/exhibition-booth-design-build',
   '/services/event-production',
   '/services/branding-advertising',
   '/services/technical-production',
@@ -9,7 +10,7 @@ export const TASK4_SERVICE_ROUTES = [
 ] as const
 
 export type Task4ServiceRoute = (typeof TASK4_SERVICE_ROUTES)[number]
-export type Task4MediaKey = 'eventKeynote' | 'brandingLobby' | 'technicalControl' | 'digitalDashboard' | 'automationAnalytics' | 'aiPavilion' | 'interiorsLobby'
+export type Task4MediaKey = 'exhibitionStudio' | 'boothBuild' | 'eventKeynote' | 'brandingLobby' | 'technicalControl' | 'digitalDashboard' | 'automationAnalytics' | 'aiPavilion' | 'interiorsLobby'
 export type ServicePrimitive = 'hero' | 'editorial' | 'split' | 'flow' | 'scope-list' | 'media-feature' | 'related-services' | 'cta'
 
 export type ServiceSectionContent = {
@@ -33,6 +34,10 @@ export type Task4ServiceContent = {
   metadata: { title: string; description: string }
   hero: { eyebrow: string; title: string; lead: string; anchorLabel?: string; anchorHref?: `#${string}` }
   sections: Readonly<Record<string, ServiceSectionContent>>
+  heroMedia?: {
+    key: Task4MediaKey
+    runtimePath: `/media/fnb/${string}`
+  }
   media: {
     key: Task4MediaKey
     runtimePath: `/media/fnb/${string}`
@@ -64,6 +69,30 @@ const commonCtaHref = '/project-enquiry' as const
 const conceptualDisclosure = 'Conceptual capability imagery — not project evidence'
 
 export const TASK4_SERVICE_CONTENT = {
+  '/services/exhibition-booth-design-build': {
+    route: '/services/exhibition-booth-design-build', publicationStatus: 'approved-copy',
+    truthBasis: { status: 'owner-verified-capability-scope', qualification: 'Owner-authorized exhibition capability language only; engineering, venue requirements and authority approvals remain specific to the approved brief and site.' },
+    metadata: { title: 'Exhibition Booth Design & Build | FNB Events', description: 'Exhibition booth strategy, concept, spatial planning, engineering coordination, material thinking, fabrication, installation and experience delivery.' },
+    hero: { eyebrow: 'Service 01 · Exhibition environments', title: 'Exhibition Booth Design & Build', lead: 'A booth is a temporary piece of architecture with one job: make the brand legible, useful and memorable inside a crowded environment.' },
+    sections: {
+      strategicProposition: { id: 'strategic-proposition', index: '01 · Strategic proposition', title: 'Begin with what the space must do.', body: ['Floor area is only the starting condition. The stronger question is how the environment should direct attention, support conversation and express the brand under real operational constraints.', 'Strategy aligns audience, message, movement and practical delivery before a visual language is allowed to take over.'], aside: 'The proposition is capability-oriented. No project, client or venue claim is implied.' },
+      concept: { id: 'concept', index: '02 · Concept', title: 'Translate the brief into a spatial idea.', body: ['A clear concept gives every later decision a reason: what visitors encounter first, what they understand next and where the experience becomes useful.', 'It is a framework for form, content, light, graphics and interaction—not a decorative theme applied at the end.'] },
+      sketchDesign: { id: 'sketch-design', index: '03 · Sketch / design', title: 'Test hierarchy before detail.', body: ['Early plans, elevations and visual studies are used to test proportion, sightlines, brand presence and the relationship between open and controlled areas.', 'Design develops through review. Each pass should remove ambiguity before fabrication information becomes expensive to change.'] },
+      spatialPlanning: { id: 'spatial-planning', index: '04 · Spatial planning', title: 'Plan movement, pause and purpose.', body: [], items: ['Arrival and first read', 'Circulation and access', 'Conversation and demonstration', 'Storage and operational support'] },
+      engineering: { id: 'engineering', index: '05 · Engineering', title: 'Resolve the build behind the image.', body: ['Design intent has to become coordinated information: structure, interfaces, power, lighting, AV, access and installation sequence.', 'Engineering thinking exposes conflicts early and keeps the visible environment connected to the practical systems supporting it.'], aside: 'Structural, electrical and venue-critical decisions remain subject to relevant qualified review, venue requirements and authority approvals.' },
+      materialThinking: { id: 'material-thinking', index: '06 · Material thinking', title: 'Choose materials for effect and consequence.', body: ['Finish, reflectance, weight, durability, assembly and recovery all affect the final decision. Material language should support the concept while remaining appropriate to the build and venue context.', 'Samples and mock-ups can make colour, junctions and illuminated surfaces tangible before production is committed.'] },
+      fabrication: { id: 'fabrication', index: '07 · Fabrication', title: 'Turn coordinated intent into buildable parts.', body: ['Fabrication information connects dimensions, finishes, graphics and service interfaces. Sequencing is considered alongside the object so the environment can move from workshop logic to site logic.'] },
+      buildProgression: { id: 'build-progression', index: '08 · Build progression', title: 'Make the sequence visible.', body: ['Base, frame, services, surfaces, graphics, light, AV and furniture form an interdependent sequence. A clear progression helps teams understand what must be complete before the next layer arrives.', 'Reviews throughout the build focus on alignment with coordinated intent rather than treating completion as the first inspection point.'] },
+      installation: { id: 'installation', index: '09 · Installation', title: 'Plan the site as a controlled handover.', body: ['Access windows, logistics, venue rules, adjacent contractors and commissioning requirements shape installation planning.', 'The goal is a deliberate transition from build environment to visitor environment, with safety and approvals treated as real dependencies.'] },
+      experienceDelivery: { id: 'experience-delivery', index: '10 · Experience delivery', title: 'The environment is ready when it works.', body: ['Final delivery connects the physical space with content, technical systems and the people operating it. The visitor should encounter one coherent experience, not the seams between disciplines.', 'Operational information and handover points stay explicit so the live environment can be used as intended.'] },
+    },
+    heroMedia: { key: 'exhibitionStudio', runtimePath: '/media/fnb/capabilities/exhibition-design-studio.png' },
+    media: { key: 'boothBuild', runtimePath: '/media/fnb/process/booth-build-progress.png', sectionKey: 'fabrication', mediaPosition: 'end', mediaAspect: 'landscape', rhythm: 'middle', disclosure: conceptualDisclosure },
+    related: { id: 'related-capabilities', label: 'Related capabilities', linkLabel: 'Explore', title: 'Connect the environment to the systems around it.', items: [{ number: '02', name: 'Event Production', href: '/services/event-production' }, { number: '03', name: 'Branding & Advertising', href: '/services/branding-advertising' }, { number: '04', name: 'Technical Production', href: '/services/technical-production' }] },
+    cta: { id: 'project-enquiry', eyebrow: 'Project enquiry', title: 'Start with the floor plan and the constraint.', copy: 'Share the brief, location, date, required services and approximate scale. The enquiry route will collect the project context without implying a confirmed scope or delivery promise.', label: 'Start a project', href: commonCtaHref },
+    runtimeBoundaries: [{ sectionKey: 'engineering', source: 'aside' }],
+    composition: [{ primitive: 'hero' }, { primitive: 'editorial', sectionKey: 'strategicProposition' }, { primitive: 'editorial', sectionKey: 'concept' }, { primitive: 'editorial', sectionKey: 'sketchDesign' }, { primitive: 'scope-list', sectionKey: 'spatialPlanning' }, { primitive: 'editorial', sectionKey: 'engineering' }, { primitive: 'editorial', sectionKey: 'materialThinking' }, { primitive: 'media-feature', sectionKey: 'fabrication', mediaPosition: 'end', mediaAspect: 'landscape', rhythm: 'middle' }, { primitive: 'editorial', sectionKey: 'buildProgression' }, { primitive: 'editorial', sectionKey: 'installation' }, { primitive: 'editorial', sectionKey: 'experienceDelivery' }, { primitive: 'related-services' }, { primitive: 'cta' }],
+  },
   '/services/event-production': {
     route: '/services/event-production', publicationStatus: 'approved-copy',
     truthBasis: { status: 'owner-verified-capability-scope', qualification: 'Owner-authorized capability language only; execution remains dependent on the approved brief, venue conditions, appointed teams and applicable approvals.' },

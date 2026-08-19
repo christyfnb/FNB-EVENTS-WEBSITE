@@ -8,3 +8,12 @@ export function getTask4ServiceMedia(content: ApprovedTask4ServiceContent): Medi
   }
   return asset
 }
+
+export function getTask4HeroMedia(content: ApprovedTask4ServiceContent): MediaAsset | undefined {
+  if (!content.heroMedia) return undefined
+  const asset = FNB_MEDIA[content.heroMedia.key]
+  if (asset.runtimePath !== content.heroMedia.runtimePath) {
+    throw new Error(`Task 4 hero media assignment mismatch for ${content.route}`)
+  }
+  return asset
+}

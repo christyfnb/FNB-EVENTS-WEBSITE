@@ -17,7 +17,7 @@ export function auditServiceRouteHtml({ status, html, expected }) {
   const mainCount = (html.match(/<main\b[^>]*\bid=["']main["'][^>]*>/gi) ?? []).length
   const h1Matches = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)]
   const h1Text = h1Matches[0] ? decodeHtml(h1Matches[0][1]) : ''
-  const encodedMediaPath = encodeURIComponent(expected.mediaPath)
+  const mediaPaths = expected.mediaPaths ?? [expected.mediaPath]
   const attribute = (source, name) => source.match(new RegExp(`\\b${name}=["']([^"']+)["']`, 'i'))?.[1]
   const renderedComposition = [...html.matchAll(/<[a-z][\w-]*\b([^>]*\bdata-service-block=["'][^"']+["'][^>]*)>/gi)].map((match) => {
     const attributes = match[1]
@@ -38,7 +38,10 @@ export function auditServiceRouteHtml({ status, html, expected }) {
   if (mainCount !== 1) failures.push(`${expected.route}: expected one main landmark, found ${mainCount}`)
   if (h1Matches.length !== 1) failures.push(`${expected.route}: expected one h1, found ${h1Matches.length}`)
   if (h1Text !== expected.h1) failures.push(`${expected.route}: expected h1 "${expected.h1}", received "${h1Text}"`)
-  if (!html.includes(expected.mediaPath) && !html.includes(encodedMediaPath)) failures.push(`${expected.route}: assigned media is absent`)
+  for (const mediaPath of mediaPaths) {
+    const encodedMediaPath = encodeURIComponent(mediaPath)
+    if (!html.includes(mediaPath) && !html.includes(encodedMediaPath)) failures.push(`${expected.route}: assigned media is absent`)
+  }
   if (!html.includes(expected.disclosure)) failures.push(`${expected.route}: truth disclosure is absent`)
   if (!new RegExp(`href=["']${expected.ctaHref}["']`).test(html)) failures.push(`${expected.route}: canonical CTA is absent`)
   if (JSON.stringify(renderedComposition) !== JSON.stringify(expected.composition)) failures.push(`${expected.route}: rendered block order or primitive/media rhythm differs from the approved composition`)
@@ -57,7 +60,7 @@ export async function auditTask4ServiceRoutes(baseUrl, fetchImpl = fetch) {
     const expected = {
       route,
       h1: content.hero.title,
-      mediaPath: content.media.runtimePath,
+      mediaPaths: [content.heroMedia?.runtimePath, content.media.runtimePath].filter(Boolean),
       ctaHref: content.cta.href,
       disclosure: content.media.disclosure,
       composition: getTask4RenderedComposition(content),
