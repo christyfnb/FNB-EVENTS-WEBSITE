@@ -3,23 +3,49 @@ import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import {
   auditHtmlDocument,
+  auditInternalLinkTargets,
   auditRobotsAndSitemap,
   collectDocumentTargets,
   HOME_SECTION_IDS,
 } from '../scripts/production-audit.mjs'
+import { auditEnquiryCopyOutcome } from '../scripts/browser-qa.mjs'
 
 const validHtml = `<!doctype html><html><head><title>FNB Events</title></head><body>
-<header><nav><a href="/services">Services</a><a href="/#process">Process</a></nav></header>
+<header><nav><a href="#main">Skip</a><a href="/services">Services</a><a href="/#process">Process</a></nav></header>
 <main id="main"><section id="process"><h1>Presence, engineered.</h1><img src="/media/fnb/home/hero-stage.png" alt="Conceptual event environment"></section></main>
 <footer><a href="/privacy-policy">Privacy</a></footer></body></html>`
 
 test('accepts a canonical, truth-safe document and collects internal link and image targets', () => {
   const result = auditHtmlDocument({ route: '/', status: 200, html: validHtml })
   assert.deepEqual(result.errors, [])
-  assert.deepEqual(collectDocumentTargets(validHtml), {
-    links: ['/services', '/#process', '/privacy-policy'],
+  assert.deepEqual(collectDocumentTargets(validHtml, '/'), {
+    links: [
+      { sourceRoute: '/', href: '#main', targetRoute: '/', fragment: 'main' },
+      { sourceRoute: '/', href: '/services', targetRoute: '/services', fragment: '' },
+      { sourceRoute: '/', href: '/#process', targetRoute: '/', fragment: 'process' },
+      { sourceRoute: '/', href: '/privacy-policy', targetRoute: '/privacy-policy', fragment: '' },
+    ],
     images: ['/media/fnb/home/hero-stage.png'],
   })
+})
+
+test('validates fragment-only links locally and cross-route fragments against destination ids', () => {
+  const aboutHtml = validHtml
+    .replace('<main id="main">', '<main id="main"><div id="details"></div>')
+    .replace('</main>', '</main></main>')
+    .replace('href="/services"', 'href="/#process"')
+  const homeHtml = validHtml.replace('href="/services"', 'href="/about#details"')
+
+  assert.deepEqual(auditInternalLinkTargets([
+    { route: '/', html: homeHtml },
+    { route: '/about', html: aboutHtml },
+  ]), [])
+
+  const errors = auditInternalLinkTargets([
+    { route: '/', html: homeHtml.replace('/about#details', '/about#missing') },
+    { route: '/about', html: aboutHtml },
+  ])
+  assert.ok(errors.some((error) => error.includes('/about#missing') && error.includes('destination fragment')))
 })
 
 test('decodes HTML entities in generated Next image optimizer targets', () => {
@@ -83,4 +109,14 @@ test('rejects unsafe robots and sitemap output while accepting a domain-gated em
 test('Vercel Analytics is emitted only inside an actual Vercel runtime', async () => {
   const layout = await readFile(new URL('../app/layout.tsx', import.meta.url), 'utf8')
   assert.match(layout, /process\.env\.VERCEL\s*===\s*['"]1['"][\s\S]*?<Analytics\s*\/>/)
+})
+
+test('enquiry copy outcome requires a real invoked control and an approved terminal status', () => {
+  const approved = ['Summary copied. It remains not sent.', 'Automatic copy was unavailable. Select and copy the summary manually.']
+  const base = { controlFound: true, invoked: true, providerText: true, noSuccess: true }
+
+  assert.deepEqual(auditEnquiryCopyOutcome({ ...base, status: approved[0] }, approved), [])
+  assert.deepEqual(auditEnquiryCopyOutcome({ ...base, status: approved[1] }, approved), [])
+  assert.ok(auditEnquiryCopyOutcome({ ...base, controlFound: false, invoked: false, status: '' }, approved).some((error) => error.includes('control')))
+  assert.ok(auditEnquiryCopyOutcome({ ...base, status: 'This summary has not been sent.' }, approved).some((error) => error.includes('approved')))
 })

@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { basename, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { ENQUIRY_FORM_CONTENT } from '../lib/task5-institutional-content.ts'
 import { CANONICAL_ROUTES, HOME_SECTION_IDS } from './production-audit.mjs'
 
 const VIEWPORTS = [
@@ -22,6 +23,20 @@ const REPRESENTATIVE_ROUTES = new Set([
 ])
 
 const delay = (milliseconds) => new Promise((accept) => setTimeout(accept, milliseconds))
+const APPROVED_COPY_STATUSES = [
+  ENQUIRY_FORM_CONTENT.review.copied,
+  ENQUIRY_FORM_CONTENT.review.copyFailed,
+]
+
+export function auditEnquiryCopyOutcome(outcome, approvedStatuses = APPROVED_COPY_STATUSES) {
+  const errors = []
+  if (!outcome.controlFound) errors.push('enquiry copy control was not found')
+  if (!outcome.invoked) errors.push('enquiry copy control was not invoked')
+  if (!approvedStatuses.includes(outcome.status)) errors.push(`enquiry copy status is not an approved terminal outcome: ${outcome.status || '<empty>'}`)
+  if (!outcome.providerText) errors.push('enquiry copy state does not expose NOT_SENT')
+  if (!outcome.noSuccess) errors.push('enquiry copy state presents a delivery success claim')
+  return errors
+}
 
 class Cdp {
   constructor(url) {
@@ -351,15 +366,27 @@ async function runBrowserQa({ baseUrl, browserExecutable, artifactDir }) {
       return { alerts: document.querySelectorAll('[role="alert"]').length, focus: document.activeElement?.id };
     })()`)
     const review = await evaluate(cdp, `(async () => {
+      const approvedStatuses = ${JSON.stringify(APPROVED_COPY_STATUSES)};
       const set = (selector, value) => { const element = document.querySelector(selector); element.value = value; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); };
       set('#name', 'QA Reviewer'); set('#email', 'qa@example.test'); set('#projectType', document.querySelectorAll('#projectType option')[1].value); set('#message', 'A truth-safe local QA enquiry brief.');
       const service = document.querySelector('input[name="services"]'); service.checked = true; service.dispatchEvent(new Event('change', { bubbles: true }));
       document.querySelector('button.fnb-btn-primary').click();
       await new Promise((accept) => setTimeout(accept, 150));
       const copyButton = Array.from(document.querySelectorAll('button')).find((button) => /copy/i.test(button.textContent));
-      copyButton?.click(); await new Promise((accept) => setTimeout(accept, 100));
+      let invoked = false;
+      if (copyButton) {
+        copyButton.click();
+        invoked = true;
+        for (let attempt = 0; attempt < 40; attempt += 1) {
+          const status = document.querySelector('[role="status"]')?.textContent?.trim();
+          if (approvedStatuses.includes(status)) break;
+          await new Promise((accept) => setTimeout(accept, 50));
+        }
+      }
       return {
         review: Boolean(document.querySelector('#enquiry-review-heading')),
+        controlFound: Boolean(copyButton),
+        invoked,
         providerText: document.body.innerText.includes('NOT_SENT'),
         noSuccess: !/successfully sent|submitted successfully/i.test(document.body.innerText),
         status: document.querySelector('[role="status"]')?.textContent?.trim(),
@@ -367,7 +394,8 @@ async function runBrowserQa({ baseUrl, browserExecutable, artifactDir }) {
     })()`)
     report.interactions.push({ name: 'enquiry validation', ...validation }, { name: 'enquiry review/copy/NOT_SENT', ...review })
     if (validation.alerts < 5 || validation.focus !== 'name') report.errors.push(`enquiry validation failed: ${JSON.stringify(validation)}`)
-    if (!review.review || !review.providerText || !review.noSuccess) report.errors.push(`enquiry review failed: ${JSON.stringify(review)}`)
+    if (!review.review) report.errors.push(`enquiry review failed: ${JSON.stringify(review)}`)
+    report.errors.push(...auditEnquiryCopyOutcome(review))
 
     currentCheck = 'branded 404'
     await navigate(cdp, new URL('/__task-6-branded-404-check__', baseUrl).href)

@@ -78,25 +78,59 @@ function visibleText(html) {
     .trim()
 }
 
-function normalizedInternalHref(href) {
+function normalizedInternalLink(href, sourceRoute) {
+  if (href.startsWith('#')) {
+    return { sourceRoute, href, targetRoute: sourceRoute, fragment: href.slice(1) }
+  }
   if (!href.startsWith('/') || href.startsWith('//')) return null
   try {
     const url = new URL(href, 'https://audit.invalid')
-    return `${url.pathname}${url.hash}`
+    return {
+      sourceRoute,
+      href: `${url.pathname}${url.hash}`,
+      targetRoute: url.pathname,
+      fragment: url.hash.slice(1),
+    }
   } catch {
-    return href
+    return { sourceRoute, href, targetRoute: href, fragment: '' }
   }
 }
 
-export function collectDocumentTargets(html) {
+export function collectDocumentTargets(html, sourceRoute = '/') {
   const links = attributeValues(html, 'a', 'href')
-    .map(normalizedInternalHref)
+    .map((href) => normalizedInternalLink(href, sourceRoute))
     .filter(Boolean)
   const imageSources = attributeValues(html, 'img', 'src')
   // Audit the browser fallback/current source. The responsive srcset is generated
   // from the same registered binary and is exercised at real viewport widths by
   // the rendered CDP suite rather than issuing every candidate serially here.
-  return { links: [...new Set(links)], images: [...new Set(imageSources)] }
+  return {
+    links: [...new Map(links.map((link) => [link.href, link])).values()],
+    images: [...new Set(imageSources)],
+  }
+}
+
+function documentIds(html) {
+  return new Set(attributeValues(html, '[a-z][a-z0-9-]*', 'id'))
+}
+
+export function auditInternalLinkTargets(documents) {
+  const errors = []
+  const idsByRoute = new Map(documents.map(({ route, html }) => [route, documentIds(html)]))
+  for (const { route, html } of documents) {
+    for (const link of collectDocumentTargets(html, route).links) {
+      if (!CANONICAL_SET.has(link.targetRoute)) {
+        errors.push(`${route}: non-canonical internal link: ${link.href}`)
+        continue
+      }
+      if (!link.fragment) continue
+      const destinationIds = idsByRoute.get(link.targetRoute)
+      if (!destinationIds?.has(link.fragment)) {
+        errors.push(`${route}: destination fragment missing for ${link.href} on ${link.targetRoute}`)
+      }
+    }
+  }
+  return errors
 }
 
 export function auditHtmlDocument({ route, status, html, requireHomeSections = false }) {
@@ -124,16 +158,14 @@ export function auditHtmlDocument({ route, status, html, requireHomeSections = f
     if (match) errors.push(`${route}: unsupported proof-like claim: ${match[0]}`)
   }
 
-  const ids = new Set(attributeValues(html, '[a-z][a-z0-9-]*', 'id'))
-  for (const href of collectDocumentTargets(html).links) {
-    const [pathname, hash] = href.split('#')
-    const targetPath = pathname || route
-    if (!CANONICAL_SET.has(targetPath)) {
-      errors.push(`${route}: non-canonical internal link: ${href}`)
+  const ids = documentIds(html)
+  for (const link of collectDocumentTargets(html, route).links) {
+    if (!CANONICAL_SET.has(link.targetRoute)) {
+      errors.push(`${route}: non-canonical internal link: ${link.href}`)
       continue
     }
-    if (hash && !(targetPath === '/' && hash === 'process') && targetPath === route && !ids.has(hash)) {
-      errors.push(`${route}: missing local anchor target: ${href}`)
+    if (link.fragment && link.targetRoute === route && !ids.has(link.fragment)) {
+      errors.push(`${route}: missing local anchor target: ${link.href}`)
     }
   }
 
@@ -175,7 +207,8 @@ export async function auditProductionSite(baseUrl) {
   const startedAt = new Date().toISOString()
   const errors = []
   const documents = []
-  const allLinks = new Set()
+  const documentSources = []
+  const allLinks = new Map()
   const allImages = new Set()
 
   for (const route of CANONICAL_ROUTES) {
@@ -183,23 +216,26 @@ export async function auditProductionSite(baseUrl) {
       const { response, text: html } = await fetchText(baseUrl, route)
       const routeErrors = auditHtmlDocument({ route, status: response.status, html, requireHomeSections: route === '/' }).errors
       errors.push(...routeErrors)
-      const targets = collectDocumentTargets(html)
-      targets.links.forEach((link) => allLinks.add(link))
+      const targets = collectDocumentTargets(html, route)
+      targets.links.forEach((link) => allLinks.set(`${link.sourceRoute}\0${link.href}`, link))
       targets.images.forEach((image) => allImages.add(image))
       documents.push({ route, status: response.status, errors: routeErrors.length, links: targets.links.length, images: targets.images.length })
+      documentSources.push({ route, html })
     } catch (error) {
       errors.push(`${route}: request failed: ${error.message}`)
     }
   }
 
-  for (const href of allLinks) {
-    const path = href.split('#')[0] || '/'
+  errors.push(...auditInternalLinkTargets(documentSources))
+
+  const routeTargets = new Set([...allLinks.values()].map((link) => link.targetRoute))
+  for (const path of routeTargets) {
     if (!CANONICAL_SET.has(path)) continue
     try {
       const response = await fetch(new URL(path, baseUrl), { redirect: 'manual' })
-      if (response.status !== 200) errors.push(`internal link target ${href}: expected HTTP 200; received ${response.status}`)
+      if (response.status !== 200) errors.push(`internal link target ${path}: expected HTTP 200; received ${response.status}`)
     } catch (error) {
-      errors.push(`internal link target ${href}: request failed: ${error.message}`)
+      errors.push(`internal link target ${path}: request failed: ${error.message}`)
     }
   }
 
@@ -244,6 +280,7 @@ export async function auditProductionSite(baseUrl) {
       canonicalRoutes: CANONICAL_ROUTES.length,
       documents: documents.length,
       internalLinks: allLinks.size,
+      internalRouteTargets: routeTargets.size,
       imageTargets: allImages.size,
       ...media.counts,
     },
