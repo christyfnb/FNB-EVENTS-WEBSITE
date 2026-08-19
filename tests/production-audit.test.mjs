@@ -120,3 +120,18 @@ test('enquiry copy outcome requires a real invoked control and an approved termi
   assert.ok(auditEnquiryCopyOutcome({ ...base, controlFound: false, invoked: false, status: '' }, approved).some((error) => error.includes('control')))
   assert.ok(auditEnquiryCopyOutcome({ ...base, status: 'This summary has not been sent.' }, approved).some((error) => error.includes('approved')))
 })
+
+test('enquiry copy outcome rejects an approved terminal status when the control was not invoked', () => {
+  const errors = auditEnquiryCopyOutcome(
+    {
+      controlFound: true,
+      invoked: false,
+      providerText: true,
+      noSuccess: true,
+      status: 'Summary copied. It remains not sent.',
+    },
+    ['Summary copied. It remains not sent.', 'Automatic copy was unavailable. Select and copy the summary manually.'],
+  )
+
+  assert.ok(errors.some((error) => error.includes('invoked')))
+})
