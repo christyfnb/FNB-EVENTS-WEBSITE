@@ -64,4 +64,5 @@ export const FNB_MEDIA = {
   automationAnalytics: getMedia('capability-automation-analytics'),
   aiPavilion: getMedia('capability-ai-pavilion'),
   interiorsLobby: getMedia('capability-interiors-lobby'),
+  teamPortraits: teamPortraitMedia,
 } as const
