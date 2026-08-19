@@ -5,8 +5,8 @@ import { EVENT_PRODUCTION, MEDIA } from '@/lib/content'
 
 /**
  * S06 EVENT PRODUCTION — FullBleedMedia.
- * VD-02 excerpt, 12-14s silent loop. Copy inset C1-C4 bottom left on a
- * controlled scrim. No Signal here — the lighting in the footage
+ * Approved conceptual still. Copy inset C1-C4 bottom left on a
+ * controlled scrim. No Signal here — the lighting in the image
  * performs that role. Mobile: copy below the film, not overlaid.
  */
 export function S06EventProduction() {
@@ -14,13 +14,9 @@ export function S06EventProduction() {
     <section id="s06-events" aria-labelledby="s06-heading" className="relative border-t border-steel/40 bg-void">
       <div className="relative aspect-[4/5] w-full sm:aspect-video sm:max-h-[85vh]">
         <MediaSlot
-          video
-          src={MEDIA.eventVideo}
-          poster={MEDIA.eventPoster}
-          alt="Event production: setup, stage, lighting, crew checks, rehearsal, audience, final environment"
-          assetId="VD-02 / IMG-003"
-          brief="Event production film excerpt, 12-14s silent loop. Drop vd-02-event-production.mp4 + img-003-event-still.jpg into public/media/"
+          asset={MEDIA.eventProduction}
           className="absolute inset-0 h-full w-full"
+          sizes="100vw"
         />
         {/* controlled scrim bottom-left */}
         <div aria-hidden="true" className="absolute inset-0 hidden bg-gradient-to-t from-void/85 via-transparent to-transparent sm:block" />

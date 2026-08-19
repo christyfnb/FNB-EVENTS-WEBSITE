@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { NAV_LINKS } from '@/lib/content'
+import { FNB_MEDIA } from '@/lib/media-registry'
 
 export function FNBHeader() {
   const [scrolled, setScrolled] = useState(false)
@@ -31,7 +32,14 @@ export function FNBHeader() {
     >
       <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-5 md:px-10">
         <Link href="/" className="flex items-center gap-3" aria-label="FNB Events home">
-          <Image src="/images/fnb-logo.png" alt="" width={36} height={36} className="h-9 w-9 object-contain" />
+          <Image
+            src={FNB_MEDIA.logo.runtimePath}
+            alt=""
+            width={FNB_MEDIA.logo.width}
+            height={FNB_MEDIA.logo.height}
+            sizes="36px"
+            className="h-9 w-9 object-contain"
+          />
           <span className="fnb-label hidden text-warm-white sm:block">FNB Events</span>
         </Link>
 

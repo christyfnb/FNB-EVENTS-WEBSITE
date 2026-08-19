@@ -6,8 +6,8 @@ import { DIGITAL_CAPABILITIES, MEDIA } from '@/lib/content'
 /**
  * S08 DIGITAL CAPABILITIES — ImagePair.
  * Asymmetric pairing: interface media C6-C12, copy C1-C4, vertically
- * offset so it does not read as a two-column card. IMG-004 must be
- * genuine FNB work or neutral placeholder UI — never a fake dashboard.
+ * offset so it does not read as a two-column card. The interface image
+ * remains explicitly conceptual and is not presented as a shipped product.
  */
 export function S08DigitalCapabilities() {
   return (
@@ -39,11 +39,9 @@ export function S08DigitalCapabilities() {
         {/* Interface media C6-C12 */}
         <Reveal className="order-1 col-span-12 md:order-2 md:col-span-7 md:col-start-6">
           <MediaSlot
-            src={MEDIA.digitalInterface}
-            alt="High-resolution interface still of genuine FNB digital work"
-            assetId="IMG-004"
-            brief="Real interface still, 16:10. Genuine FNB work or neutral UI only — never a fake dashboard. Drop img-004-digital-interface.jpg into public/media/"
+            asset={MEDIA.digitalInterface}
             className="aspect-[16/10] w-full md:aspect-auto md:h-[520px]"
+            sizes="(max-width: 767px) 100vw, 58vw"
           />
         </Reveal>
       </div>

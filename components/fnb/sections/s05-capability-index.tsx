@@ -61,11 +61,9 @@ export function S05CapabilityIndex() {
                   {/* Mobile: own media per capability */}
                   <div className="mt-5 lg:hidden">
                     <MediaSlot
-                      src={cap.image}
-                      alt={`${cap.name} environment`}
-                      assetId={`CAP-${cap.number}`}
-                      brief={`16:10 environment image. Drop into public${cap.image}`}
+                      asset={cap.image}
                       className="aspect-[16/10] w-full"
+                      sizes="(max-width: 1023px) 100vw, 38vw"
                     />
                   </div>
                 </Link>
@@ -86,11 +84,9 @@ export function S05CapabilityIndex() {
                     }`}
                   >
                     <MediaSlot
-                      src={cap.image}
-                      alt={`${cap.name} environment`}
-                      assetId={`CAP-${cap.number}`}
-                      brief={`16:10 environment image. Drop into public${cap.image}`}
+                      asset={cap.image}
                       className="h-full w-full"
+                      sizes="38vw"
                     />
                   </div>
                 ))}

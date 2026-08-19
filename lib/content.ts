@@ -1,26 +1,14 @@
-/**
- * FNB DIGITAL FLAGSHIP — homepage content model.
- * Copy authority: docs/10-COPY-DECK.md
- * Service entities: spec/services.json (canonical, do not rename)
- *
- * MEDIA: all image/video src values point at /media/... placeholder
- * paths. Drop your real assets into public/media/ with these names
- * (or update the paths here) and they will appear site-wide.
- */
+import { FNB_MEDIA, type MediaAsset } from '@/lib/media-registry'
+
+/** FNB DIGITAL FLAGSHIP — homepage content model. */
 
 export const MEDIA = {
-  /** VD-01 hero film, 16:9 desktop. 18–22s seamless loop, muted. */
-  heroVideo: '/media/vd-01-hero.mp4',
-  /** IMG-001 hero poster, 16:9. Doubles as reduced-motion hero + OG image. */
-  heroPoster: '/media/img-001-hero-poster.jpg',
-  /** VD-02 event production excerpt, 12–14s silent loop. */
-  eventVideo: '/media/vd-02-event-production.mp4',
-  /** IMG-003 event operational still (poster for VD-02). */
-  eventPoster: '/media/img-003-event-still.jpg',
-  /** IMG-004 digital interface still, 16:10. Real screens only. */
-  digitalInterface: '/media/img-004-digital-interface.jpg',
-  /** IMG-005 finished interior, 16:9. */
-  interiorSpace: '/media/img-005-interior.jpg',
+  hero: FNB_MEDIA.hero,
+  editorialGateway: FNB_MEDIA.editorialGateway,
+  boothBuild: FNB_MEDIA.boothBuild,
+  eventProduction: FNB_MEDIA.eventKeynote,
+  digitalInterface: FNB_MEDIA.digitalDashboard,
+  interiorSpace: FNB_MEDIA.interiorsLobby,
 } as const
 
 export const HERO = {
@@ -38,61 +26,6 @@ export const BRAND_STATEMENT = {
     'Exhibitions, events, technical production and interiors give a brand somewhere to stand. Websites, automation and AI workflows give it somewhere to operate.',
   ],
 }
-
-export type Project = {
-  id: string
-  title: string
-  service: string
-  location: string
-  year: string
-  /** Placeholder path — drop real project photography into public/media/projects/ */
-  image: string
-  href: string
-}
-
-/**
- * S03 SELECTED WORK — REAL_REQUIRED per spec.
- * These are placeholder slots awaiting verified project data + photography.
- * Replace title/service/location/year with real cleared projects.
- */
-export const SELECTED_WORK: Project[] = [
-  {
-    id: 'project-01',
-    title: 'Project slot 01',
-    service: 'Exhibition Booth Design & Build',
-    location: 'Location',
-    year: '2026',
-    image: '/media/projects/project-01.jpg',
-    href: '/portfolio',
-  },
-  {
-    id: 'project-02',
-    title: 'Project slot 02',
-    service: 'Event Production',
-    location: 'Location',
-    year: '2026',
-    image: '/media/projects/project-02.jpg',
-    href: '/portfolio',
-  },
-  {
-    id: 'project-03',
-    title: 'Project slot 03',
-    service: 'Technical Production',
-    location: 'Location',
-    year: '2025',
-    image: '/media/projects/project-03.jpg',
-    href: '/portfolio',
-  },
-  {
-    id: 'project-04',
-    title: 'Project slot 04',
-    service: 'Interiors & Commercial Spaces',
-    location: 'Location',
-    year: '2025',
-    image: '/media/projects/project-04.jpg',
-    href: '/portfolio',
-  },
-]
 
 /** S04 stage labels — canonical, mono uppercase. */
 export const BUILD_STAGES = [
@@ -114,8 +47,7 @@ export type Capability = {
   problem: string
   route: string
   cluster: string
-  /** Placeholder path for the capability environment image, 16:10 */
-  image: string
+  image: MediaAsset
 }
 
 /** S05 — canonical service entities from spec/services.json + copy deck problem lines. */
@@ -126,7 +58,7 @@ export const CAPABILITIES: Capability[] = [
     problem: 'You have floor space and one chance to be noticed.',
     route: '/services/exhibition-booth-design-build',
     cluster: 'EXPERIENCES',
-    image: '/media/capabilities/cap-01-exhibition.jpg',
+    image: FNB_MEDIA.exhibitionStudio,
   },
   {
     number: '02',
@@ -134,7 +66,7 @@ export const CAPABILITIES: Capability[] = [
     problem: 'Hundreds of moving parts. One show with no room for improvisation.',
     route: '/services/event-production',
     cluster: 'EXPERIENCES',
-    image: '/media/capabilities/cap-02-events.jpg',
+    image: FNB_MEDIA.eventKeynote,
   },
   {
     number: '03',
@@ -142,7 +74,7 @@ export const CAPABILITIES: Capability[] = [
     problem: 'Your brand must read the same in print, on screen and on a wall.',
     route: '/services/branding-advertising',
     cluster: 'BRAND & SPACE',
-    image: '/media/capabilities/cap-03-branding.jpg',
+    image: FNB_MEDIA.brandingLobby,
   },
   {
     number: '04',
@@ -150,7 +82,7 @@ export const CAPABILITIES: Capability[] = [
     problem: 'Stage, light, sound and control, planned before anyone arrives.',
     route: '/services/technical-production',
     cluster: 'EXPERIENCES',
-    image: '/media/capabilities/cap-04-technical.jpg',
+    image: FNB_MEDIA.technicalControl,
   },
   {
     number: '05',
@@ -158,7 +90,7 @@ export const CAPABILITIES: Capability[] = [
     problem: 'The experience should not end when the venue empties.',
     route: '/services/websites-digital-experiences',
     cluster: 'DIGITAL SYSTEMS',
-    image: '/media/capabilities/cap-05-websites.jpg',
+    image: FNB_MEDIA.digitalDashboard,
   },
   {
     number: '06',
@@ -166,7 +98,7 @@ export const CAPABILITIES: Capability[] = [
     problem: 'Your team is doing work software should be doing.',
     route: '/services/automation-systems',
     cluster: 'DIGITAL SYSTEMS',
-    image: '/media/capabilities/cap-06-automation.jpg',
+    image: FNB_MEDIA.automationAnalytics,
   },
   {
     number: '07',
@@ -174,7 +106,7 @@ export const CAPABILITIES: Capability[] = [
     problem: 'Intelligence inside the workflow, with a human still deciding.',
     route: '/services/ai-workflow-solutions',
     cluster: 'DIGITAL SYSTEMS',
-    image: '/media/capabilities/cap-07-ai.jpg',
+    image: FNB_MEDIA.aiPavilion,
   },
   {
     number: '08',
@@ -182,7 +114,7 @@ export const CAPABILITIES: Capability[] = [
     problem: 'A permanent space that has to work commercially, not just look good.',
     route: '/services/interiors-commercial-spaces',
     cluster: 'BRAND & SPACE',
-    image: '/media/capabilities/cap-08-interiors.jpg',
+    image: FNB_MEDIA.interiorsLobby,
   },
 ]
 

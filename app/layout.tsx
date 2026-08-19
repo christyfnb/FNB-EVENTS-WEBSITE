@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Archivo, Geist_Mono } from 'next/font/google'
+import { FNB_MEDIA } from '@/lib/media-registry'
 import './globals.css'
 
 const archivo = Archivo({
@@ -19,9 +20,8 @@ export const metadata: Metadata = {
   title: 'FNB Events | Exhibition Stands, Event Production & Digital Systems',
   description:
     'FNB designs, engineers and builds the environments brands appear in, then extends that presence into the digital systems behind them. Exhibitions, events, technical production, interiors, websites, automation and AI workflows.',
-  generator: 'v0.app',
   icons: {
-    icon: [{ url: '/images/fnb-logo.png' }],
+    icon: [{ url: FNB_MEDIA.logo.runtimePath }],
   },
   openGraph: {
     title: 'FNB Events | Presence, engineered.',

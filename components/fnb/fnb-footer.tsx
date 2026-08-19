@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { CAPABILITIES, NAV_LINKS } from '@/lib/content'
+import { FNB_MEDIA } from '@/lib/media-registry'
 
 export function FNBFooter() {
   return (
@@ -9,7 +10,14 @@ export function FNBFooter() {
         <div className="flex flex-col gap-12 lg:flex-row lg:justify-between">
           <div className="flex flex-col gap-6 lg:max-w-sm">
             <div className="flex items-center gap-3">
-              <Image src="/images/fnb-logo.png" alt="" width={44} height={44} className="h-11 w-11 object-contain" />
+              <Image
+                src={FNB_MEDIA.logo.runtimePath}
+                alt=""
+                width={FNB_MEDIA.logo.width}
+                height={FNB_MEDIA.logo.height}
+                sizes="44px"
+                className="h-11 w-11 object-contain"
+              />
               <div className="flex flex-col">
                 <span className="fnb-label text-warm-white">FNB Events</span>
                 <span className="fnb-label text-ash">Future Next Branding</span>

@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { BUILD_STAGES } from '@/lib/content'
+import { MediaSlot } from '@/components/fnb/media-slot'
+import { BUILD_STAGES, MEDIA } from '@/lib/content'
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
 
@@ -152,6 +153,14 @@ export function S04ExhibitionTransformation() {
                   <path d="M 200 215 L 400 165 L 600 215" stroke="var(--fnb-signal-hot)" strokeWidth="3" />
                 </g>
               </svg>
+              <MediaSlot
+                asset={MEDIA.boothBuild}
+                className={`mx-auto -mt-16 aspect-[16/7] w-[88%] border border-steel/40 transition-opacity duration-[640ms] ${
+                  s >= 8 ? 'opacity-75' : 'opacity-20'
+                }`}
+                sizes="(max-width: 1023px) 92vw, 58vw"
+                decorative
+              />
             </div>
 
             {/* Stage counter C11-C12 */}

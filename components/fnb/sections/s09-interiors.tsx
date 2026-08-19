@@ -57,14 +57,12 @@ export function S09Interiors() {
   return (
     <section ref={ref} id="s09-interiors" aria-labelledby="s09-heading" className="relative border-t border-steel/40 bg-void">
       <div className="relative aspect-[4/5] w-full sm:aspect-video sm:max-h-[85vh]">
-        {/* Finished space — IMG-005 */}
+        {/* Conceptual finished-space capability image. */}
         <div className={`absolute inset-0 transition-opacity duration-[480ms] ${isRevealed ? 'opacity-100' : 'opacity-40'}`}>
           <MediaSlot
-            src={MEDIA.interiorSpace}
-            alt="Finished commercial interior with designed lighting and corrected verticals"
-            assetId="IMG-005"
-            brief="Finished interior, 16:9, architectural discipline. Drop img-005-interior.jpg into public/media/"
+            asset={MEDIA.interiorSpace}
             className="h-full w-full"
+            sizes="100vw"
           />
         </div>
 
