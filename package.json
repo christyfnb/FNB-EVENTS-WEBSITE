@@ -9,8 +9,9 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "audit:media": "node scripts/media-audit.mjs",
+    "audit:services:http": "node scripts/service-route-http-audit.mjs",
     "test:media": "node --test tests/media-audit.test.mjs",
-    "test:services": "node --test tests/service-routes.test.mjs",
+    "test:services": "node --test tests/service-routes.test.mjs tests/service-http-audit.test.mjs",
     "test:routes": "node --test tests/route-architecture.test.mjs"
   },
   "dependencies": {

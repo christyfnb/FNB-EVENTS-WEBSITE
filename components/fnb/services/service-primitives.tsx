@@ -2,7 +2,11 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ConceptualMedia } from '@/components/fnb/editorial/conceptual-media'
 import type { MediaAsset } from '@/lib/media-registry'
-import { getServiceByHref, type ServiceHref } from '@/lib/site-registry'
+import type { ServiceHref } from '@/lib/site-registry'
+
+export function ServiceCopy({ paragraphs }: { paragraphs: readonly string[] }) {
+  return <>{paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</>
+}
 
 type ServiceScopeListProps = {
   items: readonly string[]
@@ -51,6 +55,7 @@ type ServiceMediaFeatureProps = {
   mediaPosition?: 'start' | 'end'
   portrait?: boolean
   boundary?: string
+  disclosure?: string
 }
 
 export function ServiceMediaFeature({
@@ -62,6 +67,7 @@ export function ServiceMediaFeature({
   mediaPosition = 'end',
   portrait = false,
   boundary,
+  disclosure,
 }: ServiceMediaFeatureProps) {
   const headingId = `${id}-heading`
   return (
@@ -77,6 +83,7 @@ export function ServiceMediaFeature({
           asset={asset}
           sizes="(min-width: 1024px) 48vw, 100vw"
           className={`${portrait ? 'aspect-[4/5] lg:max-h-[44rem]' : 'aspect-[3/2]'} ${mediaPosition === 'start' ? 'lg:order-1' : ''}`}
+          label={disclosure}
         />
       </div>
     </section>
@@ -85,29 +92,28 @@ export function ServiceMediaFeature({
 
 type RelatedServicesProps = {
   id?: string
+  label?: string
+  linkLabel?: string
   title: string
-  hrefs: readonly ServiceHref[]
+  items: readonly { number: string; name: string; href: ServiceHref }[]
 }
 
-export function RelatedServices({ id = 'related-services', title, hrefs }: RelatedServicesProps) {
+export function RelatedServices({ id = 'related-services', label = 'Related services', linkLabel = 'Explore', title, items }: RelatedServicesProps) {
   return (
     <section id={id} aria-labelledby={`${id}-heading`} className="border-t border-steel/40 bg-obsidian">
       <div className="mx-auto max-w-[1600px] px-5 py-16 md:px-10 md:py-24">
-        <p className="fnb-label text-signal">Related services</p>
+        <p className="fnb-label text-signal">{label}</p>
         <h2 id={`${id}-heading`} className="fnb-head mt-5 max-w-[16ch] text-3xl text-warm-white md:text-5xl">{title}</h2>
         <ul className="mt-10 border-t border-steel/50">
-          {hrefs.map((href) => {
-            const service = getServiceByHref(href)
-            return (
-              <li key={href} className="border-b border-steel/50">
-                <Link href={href} className="group grid min-h-20 gap-3 py-6 sm:grid-cols-[4rem_minmax(0,1fr)_auto] sm:items-center">
-                  <span className="fnb-label text-signal">{service.number}</span>
-                  <span className="fnb-head text-xl text-warm-white transition-colors group-hover:text-signal">{service.name}</span>
-                  <span className="fnb-label text-ash">Explore <span aria-hidden="true">&#8594;</span></span>
+          {items.map((item) => (
+              <li key={item.href} className="border-b border-steel/50">
+                <Link href={item.href} className="group grid min-h-20 gap-3 py-6 sm:grid-cols-[4rem_minmax(0,1fr)_auto] sm:items-center">
+                  <span className="fnb-label text-signal">{item.number}</span>
+                  <span className="fnb-head text-xl text-warm-white transition-colors group-hover:text-signal">{item.name}</span>
+                  <span className="fnb-label text-ash">{linkLabel} <span aria-hidden="true">&#8594;</span></span>
                 </Link>
               </li>
-            )
-          })}
+          ))}
         </ul>
       </div>
     </section>

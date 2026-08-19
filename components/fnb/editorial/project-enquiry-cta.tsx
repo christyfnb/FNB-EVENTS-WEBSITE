@@ -5,9 +5,11 @@ type ProjectEnquiryCtaProps = {
   eyebrow?: string
   title: string
   copy: string
+  linkLabel?: string
+  href?: '/project-enquiry'
 }
 
-export function ProjectEnquiryCta({ id = 'project-enquiry', eyebrow = 'Next move', title, copy }: ProjectEnquiryCtaProps) {
+export function ProjectEnquiryCta({ id = 'project-enquiry', eyebrow = 'Next move', title, copy, linkLabel = 'Start a project', href = '/project-enquiry' }: ProjectEnquiryCtaProps) {
   return (
     <section id={id} aria-labelledby={`${id}-heading`} className="border-t border-signal/40 bg-void">
       <div className="mx-auto max-w-[1600px] px-5 py-20 md:px-10 md:py-28">
@@ -18,8 +20,8 @@ export function ProjectEnquiryCta({ id = 'project-enquiry', eyebrow = 'Next move
           </h2>
           <div>
             <p className="max-w-xl leading-relaxed text-mist">{copy}</p>
-            <Link href="/project-enquiry" className="fnb-btn-primary mt-8">
-              Start a project <span aria-hidden="true">&#8594;</span>
+            <Link href={href} className="fnb-btn-primary mt-8">
+              {linkLabel} <span aria-hidden="true">&#8594;</span>
             </Link>
           </div>
         </div>
