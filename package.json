@@ -14,7 +14,10 @@
     "test:media": "node --test tests/media-audit.test.mjs",
     "test:services": "node --test tests/service-routes.test.mjs tests/service-http-audit.test.mjs",
     "test:routes": "node --test tests/route-architecture.test.mjs",
-    "test:institutional": "node --test tests/institutional-routes.test.mjs tests/institutional-http-audit.test.mjs"
+    "test:institutional": "node --test tests/institutional-routes.test.mjs tests/institutional-http-audit.test.mjs",
+    "test:quality": "node --test tests/production-audit.test.mjs",
+    "audit:production:http": "node scripts/production-audit.mjs",
+    "audit:browser": "node scripts/browser-qa.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

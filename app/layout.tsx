@@ -55,7 +55,7 @@ export default function RootLayout({
         <FNBHeader />
         {children}
         <FNBFooter />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {process.env.VERCEL === '1' && <Analytics />}
       </body>
     </html>
   )
