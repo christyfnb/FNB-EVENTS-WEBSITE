@@ -42,7 +42,14 @@ export function auditSeoText({ robots, sitemap, verifiedSiteUrl }) {
   const sitemapUrls = [...sitemap.matchAll(/<loc>(https?:\/\/[^<]+)<\/loc>/gi)].map((match) => match[1])
   const absoluteUrls = [...robotsUrls, ...sitemapUrls]
   if (!verifiedSiteUrl && absoluteUrls.length) failures.push('SEO output contains an unverified absolute URL')
-  if (verifiedSiteUrl && absoluteUrls.some((url) => !url.startsWith(verifiedSiteUrl))) failures.push('SEO output contains an absolute URL outside the verified site origin')
+  const verifiedOrigin = verifiedSiteUrl ? new URL(verifiedSiteUrl).origin : undefined
+  if (verifiedOrigin && absoluteUrls.some((candidate) => {
+    try {
+      return new URL(candidate).origin !== verifiedOrigin
+    } catch {
+      return true
+    }
+  })) failures.push('SEO output contains an absolute URL outside the verified site origin')
   return failures
 }
 

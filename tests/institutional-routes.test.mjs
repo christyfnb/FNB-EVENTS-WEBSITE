@@ -113,6 +113,10 @@ test('project enquiry exposes accessible labels, grouped services, errors, revie
     /navigator\.clipboard\.writeText/,
     /NOT_SENT/,
   ]) assert.match(form, marker)
+  const sectionLabelReference = form.match(/<section\s+aria-labelledby=["']([^"']+)["']/)?.[1]
+  assert.ok(sectionLabelReference, 'enquiry form section must declare an aria-labelledby reference')
+  const referencedIdPattern = new RegExp(`\\bid=["']${sectionLabelReference}["']`, 'g')
+  assert.equal((form.match(referencedIdPattern) ?? []).length, 1, `aria-labelledby must reference one unique existing id: ${sectionLabelReference}`)
   assert.doesNotMatch(form, /message sent|successfully sent|thank you for your submission|type=["']submit["']/i)
 })
 

@@ -71,6 +71,7 @@ export function ProjectEnquiryForm() {
 
   return (
     <section aria-labelledby="enquiry-form-heading" className="border-b border-steel/40 bg-obsidian">
+      <h2 id="enquiry-form-heading" className="sr-only">{copy.heading}</h2>
       <div className="mx-auto max-w-[1100px] px-5 py-16 md:px-10 md:py-24">
         <p id="enquiry-required-note" className="fnb-label text-signal">{copy.requiredNote}</p>
         <form ref={formRef} noValidate onSubmit={handleReview} className="mt-10 space-y-10">

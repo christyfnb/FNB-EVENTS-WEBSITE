@@ -26,4 +26,10 @@ test('SEO audit forbids fabricated or local absolute domains', () => {
   const failures = auditSeoText({ robots: 'Sitemap: http://localhost:3000/sitemap.xml', sitemap: '<loc>https://example.com/about</loc>', verifiedSiteUrl: undefined })
   assert.ok(failures.some((failure) => /localhost/i.test(failure)))
   assert.ok(failures.some((failure) => /unverified absolute url/i.test(failure)))
+  const hostilePrefixFailures = auditSeoText({
+    robots: 'User-Agent: *\nAllow: /',
+    sitemap: '<urlset><url><loc>https://fnb-events.ae.attacker.example/private</loc></url></urlset>',
+    verifiedSiteUrl: 'https://fnb-events.ae',
+  })
+  assert.ok(hostilePrefixFailures.some((failure) => /outside the verified site origin/i.test(failure)), 'hostile hostname prefixes must not pass origin validation')
 })
