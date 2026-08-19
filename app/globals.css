@@ -1,0 +1,287 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+/* ============================================================
+   FNB DIGITAL FLAGSHIP — design tokens (06-DESIGN-TOKENS.md)
+   Molten orange Signal on near-black obsidian environment.
+   All neutrals tinted toward the brand hue (45).
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+
+  /* Environment */
+  --fnb-void: oklch(12% 0.008 45);
+  --fnb-obsidian: oklch(16% 0.008 45);
+  --fnb-graphite: oklch(21% 0.009 45);
+  --fnb-steel: oklch(28% 0.008 45);
+  --fnb-slate: oklch(42% 0.007 45);
+
+  /* Foreground */
+  --fnb-warm-white: oklch(96% 0.006 60);
+  --fnb-mist: oklch(78% 0.006 55);
+  --fnb-ash: oklch(60% 0.006 50);
+
+  /* Signal (provisional value per TR-003) */
+  --fnb-signal: oklch(66% 0.19 45);
+  --fnb-signal-hot: oklch(72% 0.2 50);
+  --fnb-signal-deep: oklch(52% 0.16 40);
+  --fnb-signal-trace: oklch(38% 0.09 42);
+
+  /* Type behaviour */
+  --leading-display: 0.92;
+  --leading-head: 1.04;
+  --leading-lead: 1.32;
+  --track-display: -0.03em;
+  --track-head: -0.02em;
+  --track-label: 0.12em;
+
+  /* shadcn semantic mapping */
+  --background: var(--fnb-obsidian);
+  --foreground: var(--fnb-warm-white);
+  --card: var(--fnb-graphite);
+  --card-foreground: var(--fnb-warm-white);
+  --popover: var(--fnb-graphite);
+  --popover-foreground: var(--fnb-warm-white);
+  --primary: var(--fnb-signal);
+  --primary-foreground: var(--fnb-void);
+  --secondary: var(--fnb-graphite);
+  --secondary-foreground: var(--fnb-warm-white);
+  --muted: var(--fnb-graphite);
+  --muted-foreground: var(--fnb-ash);
+  --accent: var(--fnb-signal);
+  --accent-foreground: var(--fnb-void);
+  --destructive: oklch(62% 0.17 25);
+  --border: var(--fnb-steel);
+  --input: var(--fnb-steel);
+  --ring: var(--fnb-signal);
+  --radius: 0rem;
+}
+
+@theme inline {
+  --color-void: var(--fnb-void);
+  --color-obsidian: var(--fnb-obsidian);
+  --color-graphite: var(--fnb-graphite);
+  --color-steel: var(--fnb-steel);
+  --color-slate: var(--fnb-slate);
+  --color-warm-white: var(--fnb-warm-white);
+  --color-mist: var(--fnb-mist);
+  --color-ash: var(--fnb-ash);
+  --color-signal: var(--fnb-signal);
+  --color-signal-hot: var(--fnb-signal-hot);
+  --color-signal-deep: var(--fnb-signal-deep);
+  --color-signal-trace: var(--fnb-signal-trace);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-archivo), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-sm: 0rem;
+  --radius-md: 0rem;
+  --radius-lg: 0rem;
+  --radius-xl: 0rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+::selection {
+  background: var(--fnb-signal);
+  color: var(--fnb-void);
+}
+
+/* Mono technical label */
+.fnb-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.6875rem, 0.68rem + 0.05vw, 0.75rem);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+/* Display / heading behaviour */
+.fnb-display {
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-display);
+  font-weight: 600;
+}
+
+.fnb-head {
+  line-height: var(--leading-head);
+  letter-spacing: var(--track-head);
+  font-weight: 600;
+}
+
+/* Reveal primitives — driven by data-reveal attribute */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 720ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal='in'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Line-mask reveal for headlines */
+.fnb-line-mask {
+  overflow: hidden;
+  display: block;
+}
+
+.fnb-line-mask > span {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal='in'] .fnb-line-mask > span {
+  transform: translateY(0);
+}
+
+/* CTA buttons — square-cornered, engineered */
+.fnb-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  background: var(--fnb-signal);
+  color: var(--fnb-void);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+  transition:
+    background-color 200ms ease,
+    transform 200ms ease;
+}
+
+.fnb-btn-primary:hover {
+  background: var(--fnb-signal-hot);
+}
+
+.fnb-btn-primary:active {
+  transform: translateY(1px);
+}
+
+.fnb-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  border: 1px solid var(--fnb-slate);
+  color: var(--fnb-warm-white);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+  transition:
+    border-color 200ms ease,
+    color 200ms ease;
+}
+
+.fnb-btn-ghost:hover {
+  border-color: var(--fnb-signal);
+  color: var(--fnb-signal);
+}
+
+/* Full-width signal rule — the line at rest (S14) */
+.fnb-signal-rule {
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--fnb-signal) 18%,
+    var(--fnb-signal) 82%,
+    transparent 100%
+  );
+}
+
+/* Signal travel line in the hero */
+@keyframes fnb-signal-travel {
+  0% {
+    stroke-dashoffset: 1400;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+}
+
+.fnb-signal-path {
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: fnb-signal-travel 2200ms cubic-bezier(0.22, 1, 0.36, 1) 300ms forwards;
+}
+
+@keyframes fnb-scroll-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 0.4;
+  }
+}
+
+.fnb-scroll-cue {
+  animation: fnb-scroll-cue 2400ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .fnb-line-mask > span {
+    transform: none;
+    transition: none;
+  }
+  .fnb-signal-path {
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+  .fnb-scroll-cue {
+    animation: none;
+  }
+}

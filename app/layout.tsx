@@ -1,0 +1,52 @@
+import { Analytics } from '@vercel/analytics/next'
+import type { Metadata, Viewport } from 'next'
+import { Archivo, Geist_Mono } from 'next/font/google'
+import './globals.css'
+
+const archivo = Archivo({
+  subsets: ['latin'],
+  variable: '--font-archivo',
+  weight: ['400', '500', '600', '700'],
+})
+
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-geist-mono',
+  weight: ['400', '500'],
+})
+
+export const metadata: Metadata = {
+  title: 'FNB Events | Exhibition Stands, Event Production & Digital Systems',
+  description:
+    'FNB designs, engineers and builds the environments brands appear in, then extends that presence into the digital systems behind them. Exhibitions, events, technical production, interiors, websites, automation and AI workflows.',
+  generator: 'v0.app',
+  icons: {
+    icon: [{ url: '/images/fnb-logo.png' }],
+  },
+  openGraph: {
+    title: 'FNB Events | Presence, engineered.',
+    description:
+      'Exhibitions, events, spatial production, websites, automation and AI workflows. One practice, one operating standard.',
+    type: 'website',
+  },
+}
+
+export const viewport: Viewport = {
+  colorScheme: 'dark',
+  themeColor: '#211d1a',
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en" className={`${archivo.variable} ${geistMono.variable} bg-obsidian`}>
+      <body className="antialiased font-sans">
+        {children}
+        {process.env.NODE_ENV === 'production' && <Analytics />}
+      </body>
+    </html>
+  )
+}
