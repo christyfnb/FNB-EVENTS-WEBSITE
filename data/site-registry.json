@@ -1,0 +1,57 @@
+{
+  "routes": [
+    { "id": "home", "label": "Home", "href": "/", "kind": "page", "deliveryTask": 2 },
+    { "id": "about", "label": "About", "href": "/about", "kind": "page", "deliveryTask": 5 },
+    { "id": "services", "label": "Services", "href": "/services", "kind": "page", "deliveryTask": 3 },
+    { "id": "service-exhibition", "label": "Exhibition Booth Design & Build", "href": "/services/exhibition-booth-design-build", "kind": "service", "deliveryTask": 3 },
+    { "id": "service-event-production", "label": "Event Production", "href": "/services/event-production", "kind": "service", "deliveryTask": 4 },
+    { "id": "service-branding", "label": "Branding & Advertising", "href": "/services/branding-advertising", "kind": "service", "deliveryTask": 4 },
+    { "id": "service-technical", "label": "Technical Production", "href": "/services/technical-production", "kind": "service", "deliveryTask": 4 },
+    { "id": "service-digital", "label": "Websites & Digital Experiences", "href": "/services/websites-digital-experiences", "kind": "service", "deliveryTask": 4 },
+    { "id": "service-automation", "label": "Automation Systems", "href": "/services/automation-systems", "kind": "service", "deliveryTask": 4 },
+    { "id": "service-ai", "label": "AI Workflow Solutions", "href": "/services/ai-workflow-solutions", "kind": "service", "deliveryTask": 4 },
+    { "id": "service-interiors", "label": "Interiors & Commercial Spaces", "href": "/services/interiors-commercial-spaces", "kind": "service", "deliveryTask": 4 },
+    { "id": "industries", "label": "Industries", "href": "/industries", "kind": "page", "deliveryTask": 5 },
+    { "id": "process", "label": "Process", "href": "/process", "kind": "page", "deliveryTask": 5 },
+    { "id": "team", "label": "Team", "href": "/team", "kind": "page", "deliveryTask": 5 },
+    { "id": "contact", "label": "Contact", "href": "/contact", "kind": "page", "deliveryTask": 5 },
+    { "id": "project-enquiry", "label": "Project Enquiry", "href": "/project-enquiry", "kind": "page", "deliveryTask": 5 },
+    { "id": "portfolio", "label": "Portfolio", "href": "/portfolio", "kind": "page", "deliveryTask": 5 },
+    { "id": "insights", "label": "Insights", "href": "/insights", "kind": "page", "deliveryTask": 5 },
+    { "id": "privacy", "label": "Privacy Policy", "href": "/privacy-policy", "kind": "legal", "deliveryTask": 5 },
+    { "id": "terms", "label": "Terms & Conditions", "href": "/terms-and-conditions", "kind": "legal", "deliveryTask": 5 }
+  ],
+  "primaryNavigation": [
+    { "label": "Work", "href": "/portfolio" },
+    { "label": "Services", "href": "/services" },
+    { "label": "Industries", "href": "/industries" },
+    { "label": "Process", "href": "/process" },
+    { "label": "Insights", "href": "/insights" },
+    { "label": "Contact", "href": "/contact" }
+  ],
+  "footerNavigation": [
+    { "label": "About", "href": "/about" },
+    { "label": "Industries", "href": "/industries" },
+    { "label": "Process", "href": "/process" },
+    { "label": "Team", "href": "/team" },
+    { "label": "Portfolio", "href": "/portfolio" },
+    { "label": "Insights", "href": "/insights" },
+    { "label": "Contact", "href": "/contact" }
+  ],
+  "utilityNavigation": [
+    { "label": "Homepage process", "href": "/#process" },
+    { "label": "Start a project", "href": "/project-enquiry" },
+    { "label": "Privacy", "href": "/privacy-policy" },
+    { "label": "Terms", "href": "/terms-and-conditions" }
+  ],
+  "services": [
+    { "number": "01", "name": "Exhibition Booth Design & Build", "href": "/services/exhibition-booth-design-build", "cluster": "Experiences", "problem": "You have floor space and one chance to be noticed.", "summary": "Strategy, spatial design, engineering and production thinking brought into one exhibition environment.", "mediaId": "capability-exhibition-studio", "mediaTruth": "conceptual-generated-capability-imagery", "publicationStatus": "approved-copy" },
+    { "number": "02", "name": "Event Production", "href": "/services/event-production", "cluster": "Experiences", "problem": "Hundreds of moving parts. One show with no room for improvisation.", "summary": "Planning, direction, staging and technical coordination shaped around one live experience.", "mediaId": "capability-event-keynote", "mediaTruth": "conceptual-generated-capability-imagery", "publicationStatus": "approved-copy" },
+    { "number": "03", "name": "Branding & Advertising", "href": "/services/branding-advertising", "cluster": "Brand & Space", "problem": "Your brand must read the same in print, on screen and on a wall.", "summary": "Brand systems and campaign thinking translated across physical and digital surfaces.", "mediaId": "capability-branding-lobby", "mediaTruth": "conceptual-generated-capability-imagery", "publicationStatus": "approved-copy" },
+    { "number": "04", "name": "Technical Production", "href": "/services/technical-production", "cluster": "Experiences", "problem": "Stage, light, sound and control, planned before anyone arrives.", "summary": "Technical planning and show integration for coherent, controlled event environments.", "mediaId": "capability-technical-control", "mediaTruth": "conceptual-generated-capability-imagery", "publicationStatus": "approved-copy" },
+    { "number": "05", "name": "Websites & Digital Experiences", "href": "/services/websites-digital-experiences", "cluster": "Digital Systems", "problem": "The experience should not end when the venue empties.", "summary": "Responsive digital experiences that carry the same brand intent beyond physical space.", "mediaId": "capability-digital-dashboard", "mediaTruth": "conceptual-generated-interface-imagery", "publicationStatus": "approved-copy" },
+    { "number": "06", "name": "Automation Systems", "href": "/services/automation-systems", "cluster": "Digital Systems", "problem": "Your team is doing work software should be doing.", "summary": "Workflow mapping and system connections designed around clear human controls.", "mediaId": "capability-automation-analytics", "mediaTruth": "conceptual-generated-interface-imagery", "publicationStatus": "approved-copy" },
+    { "number": "07", "name": "AI Workflow Solutions", "href": "/services/ai-workflow-solutions", "cluster": "Digital Systems", "problem": "Intelligence inside the workflow, with a human still deciding.", "summary": "AI-assisted workflow design with governance, review and business context kept visible.", "mediaId": "capability-ai-pavilion", "mediaTruth": "conceptual-generated-capability-imagery", "publicationStatus": "approved-copy" },
+    { "number": "08", "name": "Interiors & Commercial Spaces", "href": "/services/interiors-commercial-spaces", "cluster": "Brand & Space", "problem": "A permanent space that has to work commercially, not just look good.", "summary": "Spatial strategy, functional planning and brand integration for enduring environments.", "mediaId": "capability-interiors-lobby", "mediaTruth": "conceptual-generated-capability-imagery", "publicationStatus": "approved-copy" }
+  ]
+}

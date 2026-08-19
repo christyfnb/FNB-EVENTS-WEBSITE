@@ -1,6 +1,8 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Archivo, Geist_Mono } from 'next/font/google'
+import { FNBFooter } from '@/components/fnb/fnb-footer'
+import { FNBHeader } from '@/components/fnb/fnb-header'
 import { FNB_MEDIA } from '@/lib/media-registry'
 import './globals.css'
 
@@ -44,7 +46,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${archivo.variable} ${geistMono.variable} bg-obsidian`}>
       <body className="antialiased font-sans">
+        <a
+          href="#main"
+          className="fnb-label fixed left-4 top-3 z-[100] -translate-y-20 bg-signal px-4 py-3 text-void transition-transform focus:translate-y-0"
+        >
+          Skip to content
+        </a>
+        <FNBHeader />
         {children}
+        <FNBFooter />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

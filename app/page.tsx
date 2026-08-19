@@ -1,5 +1,3 @@
-import { FNBHeader } from '@/components/fnb/fnb-header'
-import { FNBFooter } from '@/components/fnb/fnb-footer'
 import { S01Hero } from '@/components/fnb/sections/s01-hero'
 import { S02BrandStatement } from '@/components/fnb/sections/s02-brand-statement'
 import { S03SelectedWork } from '@/components/fnb/sections/s03-selected-work'
@@ -23,7 +21,6 @@ import { S14Closing } from '@/components/fnb/sections/s14-closing'
 export default function HomePage() {
   return (
     <>
-      <FNBHeader />
       <main id="main">
         <S01Hero />
         <S02BrandStatement />
@@ -40,7 +37,6 @@ export default function HomePage() {
         <S13Insights />
         <S14Closing />
       </main>
-      <FNBFooter />
     </>
   )
 }

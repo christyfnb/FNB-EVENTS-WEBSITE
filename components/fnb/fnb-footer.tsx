@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { CAPABILITIES, NAV_LINKS } from '@/lib/content'
 import { FNB_MEDIA } from '@/lib/media-registry'
+import { FOOTER_NAVIGATION, SERVICE_REGISTRY } from '@/lib/site-registry'
 
 export function FNBFooter() {
   return (
@@ -31,23 +31,23 @@ export function FNBFooter() {
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
             <nav aria-label="Footer capabilities" className="flex flex-col gap-3">
               <span className="fnb-label text-ash">Capabilities</span>
-              {CAPABILITIES.slice(0, 4).map((cap) => (
-                <Link key={cap.route} href={cap.route} className="text-sm text-mist transition-colors hover:text-warm-white">
-                  {cap.name}
+              {SERVICE_REGISTRY.slice(0, 4).map((service) => (
+                <Link key={service.href} href={service.href} className="text-sm text-mist transition-colors hover:text-warm-white">
+                  {service.name}
                 </Link>
               ))}
             </nav>
             <nav aria-label="Footer digital capabilities" className="flex flex-col gap-3">
               <span className="fnb-label text-ash">Digital</span>
-              {CAPABILITIES.slice(4).map((cap) => (
-                <Link key={cap.route} href={cap.route} className="text-sm text-mist transition-colors hover:text-warm-white">
-                  {cap.name}
+              {SERVICE_REGISTRY.slice(4).map((service) => (
+                <Link key={service.href} href={service.href} className="text-sm text-mist transition-colors hover:text-warm-white">
+                  {service.name}
                 </Link>
               ))}
             </nav>
             <nav aria-label="Footer company" className="flex flex-col gap-3">
               <span className="fnb-label text-ash">Company</span>
-              {NAV_LINKS.map((link) => (
+              {FOOTER_NAVIGATION.map((link) => (
                 <Link key={link.href} href={link.href} className="text-sm text-mist transition-colors hover:text-warm-white">
                   {link.label}
                 </Link>

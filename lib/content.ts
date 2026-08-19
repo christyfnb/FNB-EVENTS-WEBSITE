@@ -1,4 +1,5 @@
-import { FNB_MEDIA, type MediaAsset } from '@/lib/media-registry'
+import { FNB_MEDIA, getMedia, type MediaAsset } from '@/lib/media-registry'
+import { SERVICE_REGISTRY, type ServiceHref } from '@/lib/site-registry'
 
 /** FNB DIGITAL FLAGSHIP — homepage content model. */
 
@@ -45,78 +46,20 @@ export type Capability = {
   number: string
   name: string
   problem: string
-  route: string
+  route: ServiceHref
   cluster: string
   image: MediaAsset
 }
 
 /** S05 — canonical service entities from spec/services.json + copy deck problem lines. */
-export const CAPABILITIES: Capability[] = [
-  {
-    number: '01',
-    name: 'Exhibition Booth Design & Build',
-    problem: 'You have floor space and one chance to be noticed.',
-    route: '/services/exhibition-booth-design-build',
-    cluster: 'EXPERIENCES',
-    image: FNB_MEDIA.exhibitionStudio,
-  },
-  {
-    number: '02',
-    name: 'Event Production',
-    problem: 'Hundreds of moving parts. One show with no room for improvisation.',
-    route: '/services/event-production',
-    cluster: 'EXPERIENCES',
-    image: FNB_MEDIA.eventKeynote,
-  },
-  {
-    number: '03',
-    name: 'Branding & Advertising',
-    problem: 'Your brand must read the same in print, on screen and on a wall.',
-    route: '/services/branding-advertising',
-    cluster: 'BRAND & SPACE',
-    image: FNB_MEDIA.brandingLobby,
-  },
-  {
-    number: '04',
-    name: 'Technical Production',
-    problem: 'Stage, light, sound and control, planned before anyone arrives.',
-    route: '/services/technical-production',
-    cluster: 'EXPERIENCES',
-    image: FNB_MEDIA.technicalControl,
-  },
-  {
-    number: '05',
-    name: 'Websites & Digital Experiences',
-    problem: 'The experience should not end when the venue empties.',
-    route: '/services/websites-digital-experiences',
-    cluster: 'DIGITAL SYSTEMS',
-    image: FNB_MEDIA.digitalDashboard,
-  },
-  {
-    number: '06',
-    name: 'Automation Systems',
-    problem: 'Your team is doing work software should be doing.',
-    route: '/services/automation-systems',
-    cluster: 'DIGITAL SYSTEMS',
-    image: FNB_MEDIA.automationAnalytics,
-  },
-  {
-    number: '07',
-    name: 'AI Workflow Solutions',
-    problem: 'Intelligence inside the workflow, with a human still deciding.',
-    route: '/services/ai-workflow-solutions',
-    cluster: 'DIGITAL SYSTEMS',
-    image: FNB_MEDIA.aiPavilion,
-  },
-  {
-    number: '08',
-    name: 'Interiors & Commercial Spaces',
-    problem: 'A permanent space that has to work commercially, not just look good.',
-    route: '/services/interiors-commercial-spaces',
-    cluster: 'BRAND & SPACE',
-    image: FNB_MEDIA.interiorsLobby,
-  },
-]
+export const CAPABILITIES: Capability[] = SERVICE_REGISTRY.map((service) => ({
+  number: service.number,
+  name: service.name,
+  problem: service.problem,
+  route: service.href,
+  cluster: service.cluster.toUpperCase(),
+  image: getMedia(service.mediaId),
+}))
 
 export const EVENT_PRODUCTION = {
   statement: 'Hundreds of moving parts. One show with no room for improvisation.',
@@ -191,12 +134,3 @@ export const CLOSING = {
   primaryCta: { label: 'Start a project', href: '/project-enquiry' },
   contactCta: { label: 'Contact', href: '/contact' },
 }
-
-export const NAV_LINKS = [
-  { label: 'Work', href: '/portfolio' },
-  { label: 'Services', href: '/services' },
-  { label: 'Industries', href: '/industries' },
-  { label: 'Process', href: '/process' },
-  { label: 'Insights', href: '/insights' },
-  { label: 'Contact', href: '/contact' },
-]
