@@ -1,4 +1,8 @@
 import siteRegistryData from '@/data/site-registry.json'
+import {
+  isNavigationActive as evaluateNavigationActive,
+  validateSiteRegistry,
+} from '@/lib/site-registry-validation.mjs'
 
 export const CANONICAL_ROUTE_HREFS = [
   '/',
@@ -25,7 +29,7 @@ export const CANONICAL_ROUTE_HREFS = [
 
 export type CanonicalHref = (typeof CANONICAL_ROUTE_HREFS)[number]
 export type ServiceHref = Extract<CanonicalHref, `/services/${string}`>
-export type NavigationHref = CanonicalHref | `/#${string}`
+export type NavigationHref = CanonicalHref | '/#process'
 
 export type RouteRecord = {
   id: string
@@ -60,7 +64,7 @@ type SiteRegistry = {
   services: readonly ServiceRecord[]
 }
 
-const siteRegistry = siteRegistryData as SiteRegistry
+const siteRegistry = validateSiteRegistry(siteRegistryData, CANONICAL_ROUTE_HREFS) as SiteRegistry
 
 export const ROUTE_REGISTRY = siteRegistry.routes
 export const PRIMARY_NAVIGATION = siteRegistry.primaryNavigation
@@ -75,8 +79,5 @@ export function getServiceByHref(href: ServiceHref): ServiceRecord {
 }
 
 export function isNavigationActive(pathname: string, href: NavigationHref): boolean {
-  const route = href.split('#')[0] || '/'
-  if (route === '/') return pathname === '/'
-  if (route === '/services') return pathname === route || pathname.startsWith('/services/')
-  return pathname === route
+  return evaluateNavigationActive(pathname, href)
 }

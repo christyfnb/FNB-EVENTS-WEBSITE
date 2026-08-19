@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { readFile, readdir } from 'node:fs/promises'
+import { access, readFile, readdir } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 
@@ -64,6 +64,10 @@ async function readRegistry() {
   return JSON.parse(await read('data/site-registry.json'))
 }
 
+function pageFileForRoute(href) {
+  return href === '/' ? 'app/page.tsx' : `app${href}/page.tsx`
+}
+
 async function sourceFiles(directory) {
   const entries = await readdir(path.join(root, directory), { withFileTypes: true })
   const nested = await Promise.all(
@@ -87,11 +91,47 @@ test('canonical route, navigation, and service registries are unique and aligned
   assert.deepEqual(serviceHrefs, expectedServiceRoutes)
   assert.equal(new Set(serviceHrefs).size, serviceHrefs.length, 'service routes must be unique')
 
-  for (const item of [...registry.primaryNavigation, ...registry.footerNavigation]) {
+  for (const item of [...registry.primaryNavigation, ...registry.footerNavigation, ...registry.utilityNavigation]) {
     const target = item.href.split('#')[0] || '/'
     assert.ok(routeHrefs.includes(target), `navigation target ${item.href} must be canonical`)
   }
   assert.ok(registry.utilityNavigation.some((item) => item.href === '/#process'), 'homepage process anchor must remain available')
+  assert.deepEqual(
+    registry.utilityNavigation.filter((item) => item.href.includes('#')).map((item) => item.href),
+    ['/#process'],
+    'the process anchor is the only permitted hash navigation target',
+  )
+})
+
+test('every canonical route exposed by the registry has an App Router page', async () => {
+  const registry = await readRegistry()
+  const missing = []
+  for (const route of registry.routes) {
+    const pageFile = pageFileForRoute(route.href)
+    try {
+      await access(path.join(root, pageFile))
+    } catch {
+      missing.push(`${route.href} -> ${pageFile}`)
+    }
+  }
+  assert.deepEqual(missing, [])
+})
+
+test('registry validation rejects invalid shapes, duplicates, and non-canonical anchors', async () => {
+  const { validateSiteRegistry } = await import('../lib/site-registry-validation.mjs')
+  const registry = await readRegistry()
+
+  const invalidAnchor = structuredClone(registry)
+  invalidAnchor.utilityNavigation[0].href = '/#not-process'
+  assert.throws(() => validateSiteRegistry(invalidAnchor, expectedCanonicalRoutes), /navigation href/i)
+
+  const duplicateId = structuredClone(registry)
+  duplicateId.routes[1].id = duplicateId.routes[0].id
+  assert.throws(() => validateSiteRegistry(duplicateId, expectedCanonicalRoutes), /route id/i)
+
+  const invalidShape = structuredClone(registry)
+  delete invalidShape.services
+  assert.throws(() => validateSiteRegistry(invalidShape, expectedCanonicalRoutes), /services/i)
 })
 
 test('service entries carry explicit truth-safe conceptual media status', async () => {
@@ -150,6 +190,43 @@ test('Task 3 routes and the complete exhibition narrative are present', async ()
   ]
   for (const id of requiredNarrative) assert.match(exhibition, new RegExp(`id=["']${id}["']`))
   assert.match(exhibition, /conceptual capability imagery/i)
+})
+
+test('conceptual imagery disclosure remains complete and visible at every breakpoint', async () => {
+  const source = await read('components/fnb/editorial/conceptual-media.tsx')
+  assert.match(source, /Conceptual capability imagery — not project evidence/)
+  const disclosure = source.match(/<figcaption[\s\S]*?<\/figcaption>/)?.[0] ?? ''
+  assert.doesNotMatch(disclosure, /\bhidden\b|\b(?:sm|md|lg|xl):hidden\b/)
+})
+
+test('header active/mobile behavior and footer utility ownership remain explicit', async () => {
+  const [header, footer] = await Promise.all([
+    read('components/fnb/fnb-header.tsx'),
+    read('components/fnb/fnb-footer.tsx'),
+  ])
+  for (const contract of [
+    /usePathname/,
+    /isNavigationActive/,
+    /aria-current/,
+    /aria-expanded/,
+    /aria-controls="fnb-mobile-nav"/,
+    /event\.key !== 'Escape'/,
+    /firstMobileLinkRef\.current\?\.focus/,
+    /toggleRef\.current\?\.focus/,
+    /onClick=\{\(\) => setOpen\(false\)\}/,
+  ]) assert.match(header, contract)
+
+  assert.match(footer, /UTILITY_NAVIGATION/)
+  assert.doesNotMatch(footer, /href="\/(?:privacy-policy|terms-and-conditions)"/)
+})
+
+test('active-route helper handles exact routes, service descendants, and the homepage anchor', async () => {
+  const { isNavigationActive } = await import('../lib/site-registry-validation.mjs')
+  assert.equal(isNavigationActive('/', '/'), true)
+  assert.equal(isNavigationActive('/about', '/'), false)
+  assert.equal(isNavigationActive('/services/exhibition-booth-design-build', '/services'), true)
+  assert.equal(isNavigationActive('/services', '/services/exhibition-booth-design-build'), false)
+  assert.equal(isNavigationActive('/', '/#process'), true)
 })
 
 test('internal hrefs use canonical absolute forms without broken placeholders', async () => {

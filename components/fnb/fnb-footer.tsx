@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { FNB_MEDIA } from '@/lib/media-registry'
-import { FOOTER_NAVIGATION, SERVICE_REGISTRY } from '@/lib/site-registry'
+import { FOOTER_NAVIGATION, SERVICE_REGISTRY, UTILITY_NAVIGATION } from '@/lib/site-registry'
+
+const legalNavigation = UTILITY_NAVIGATION.filter(
+  (item) => item.href === '/privacy-policy' || item.href === '/terms-and-conditions',
+)
 
 export function FNBFooter() {
   return (
@@ -61,12 +65,11 @@ export function FNBFooter() {
             {'\u00A9'} {new Date().getFullYear()} FNB Events
           </span>
           <div className="flex gap-6">
-            <Link href="/privacy-policy" className="fnb-label text-ash transition-colors hover:text-mist">
-              Privacy
-            </Link>
-            <Link href="/terms-and-conditions" className="fnb-label text-ash transition-colors hover:text-mist">
-              Terms
-            </Link>
+            {legalNavigation.map((item) => (
+              <Link key={item.href} href={item.href} className="fnb-label text-ash transition-colors hover:text-mist">
+                {item.label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

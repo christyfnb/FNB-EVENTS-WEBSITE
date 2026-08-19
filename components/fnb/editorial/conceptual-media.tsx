@@ -16,7 +16,7 @@ export function ConceptualMedia({
   className,
   imageClassName,
   sizes,
-  label = 'Conceptual capability imagery',
+  label = 'Conceptual capability imagery — not project evidence',
   preload = false,
 }: ConceptualMediaProps) {
   return (
@@ -28,9 +28,8 @@ export function ConceptualMedia({
         className="h-full w-full"
         imgClassName={`fnb-editorial-image ${imageClassName ?? ''}`}
       />
-      <figcaption className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-4 bg-void/85 px-4 py-3 backdrop-blur-sm">
+      <figcaption className="absolute inset-x-0 bottom-0 bg-void/85 px-4 py-3 backdrop-blur-sm">
         <span className="fnb-label text-mist">{label}</span>
-        <span className="fnb-label hidden text-ash sm:block">Not project evidence</span>
       </figcaption>
     </figure>
   )
