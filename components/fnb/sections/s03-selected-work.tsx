@@ -1,21 +1,67 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { Reveal } from '@/components/fnb/reveal'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MediaSlot } from '@/components/fnb/media-slot'
 import { MEDIA } from '@/lib/content'
 
-/** Truth-safe editorial gateway until cleared project evidence is available. */
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
+
+/**
+ * S03 SPATIAL CAPABILITY STUDY (formerly S03SelectedWork).
+ * Conceptual spatial capability showcase using bounded GSAP parallax.
+ * Truth-safe framing: communicates spatial design atmosphere, not delivered-project proof.
+ */
 export function S03SelectedWork() {
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const imageContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    const imageContainer = imageContainerRef.current
+    if (!section || !imageContainer) return
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reducedMotion) return
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 1024px)', () => {
+        gsap.fromTo(
+          imageContainer,
+          { y: -20 },
+          {
+            y: 20,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            },
+          },
+        )
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <section id="s03-work" aria-labelledby="s03-heading" className="border-t border-steel/40 bg-obsidian">
+    <section ref={sectionRef} id="s03-work" aria-labelledby="s03-heading" className="border-t border-steel/40 bg-obsidian">
       <div className="mx-auto grid max-w-[1600px] grid-cols-12 gap-x-6 gap-y-10 px-5 py-24 md:px-10 md:py-32">
-        <Reveal className="col-span-12 lg:col-span-4 lg:pt-16">
-          <p className="fnb-label text-ash">Selected work · publication review</p>
+        <div className="col-span-12 lg:col-span-4 lg:pt-16">
+          <p className="fnb-label text-ash">Spatial Capability Study · publication review</p>
           <h2 id="s03-heading" className="fnb-head mt-6 max-w-[12ch] text-4xl text-warm-white md:text-6xl">
-            The evidence matters.
+            Atmosphere & Spatial Scale.
           </h2>
           <p className="mt-8 max-w-md text-pretty leading-relaxed text-mist">
-            Selected work is being prepared for publication. Until project facts and photography are cleared, this
-            gateway uses conceptual imagery to communicate atmosphere—not delivered-project proof.
+            Spatial capability study illustrating architectural volume, material contrast, and integrated lighting systems.
+            This gateway presents conceptual spatial design thinking—not delivered-project proof.
           </p>
           <Link
             href="/portfolio"
@@ -23,19 +69,23 @@ export function S03SelectedWork() {
           >
             Portfolio publication status
           </Link>
-        </Reveal>
+        </div>
 
-        <Reveal className="col-span-12 lg:col-span-7 lg:col-start-6">
-          <MediaSlot
-            asset={MEDIA.editorialGateway}
-            className="aspect-[4/5] w-full sm:aspect-[16/10] lg:aspect-[4/3]"
-            sizes="(max-width: 1023px) 100vw, 58vw"
-          />
-          <div className="mt-4 flex items-center justify-between gap-4 border-t border-steel/40 pt-4">
-            <span className="fnb-label text-signal">Conceptual capability image</span>
-            <span className="fnb-label text-ash">Not project evidence</span>
+        <div className="col-span-12 lg:col-span-7 lg:col-start-6">
+          <div className="overflow-hidden border border-steel/40">
+            <div ref={imageContainerRef} className="will-change-transform">
+              <MediaSlot
+                asset={MEDIA.editorialGateway}
+                className="aspect-[4/5] w-full sm:aspect-[16/10] lg:aspect-[4/3]"
+                sizes="(max-width: 1023px) 100vw, 58vw"
+              />
+            </div>
           </div>
-        </Reveal>
+          <figcaption className="mt-4 flex items-center justify-between gap-4 border-t border-steel/40 pt-4">
+            <span className="fnb-label text-signal">Conceptual capability visualization</span>
+            <span className="fnb-label text-ash">Not project evidence</span>
+          </figcaption>
+        </div>
       </div>
     </section>
   )
