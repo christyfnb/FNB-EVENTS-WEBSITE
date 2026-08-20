@@ -120,11 +120,15 @@ export function auditMediaRecords({ inventory, denylist, runtime }) {
       if (source.sourceEligibility && !ELIGIBLE_SOURCE_STATUSES.has(source.sourceEligibility)) {
         errors.push(`Runtime source is not eligible: ${item.id} (${source.sourceEligibility})`)
       }
-      if (item.sha256 !== source.sha256) errors.push(`Runtime SHA-256 does not match declared source: ${item.id}`)
+      if (item.sourceSha256 !== source.sha256) {
+        errors.push(`Runtime sourceSha256 does not match approved source inventory record: ${item.id}`)
+      }
+      if (item.sha256 === source.sha256 && item.bytes !== source.bytes) {
+        errors.push(`Runtime hash equals original source hash but bytes differ: ${item.id}`)
+      }
       if (item.width !== source.width || item.height !== source.height) {
         errors.push(`Runtime dimensions do not match declared source: ${item.id}`)
       }
-      if (item.bytes !== source.bytes) errors.push(`Runtime byte size does not match declared source: ${item.id}`)
       if (item.aspectRatio !== undefined && source.aspectRatio !== undefined && item.aspectRatio !== source.aspectRatio) {
         errors.push(`Runtime aspect ratio does not match declared source: ${item.id}`)
       }

@@ -28,4 +28,6 @@ playwright-report/
 test-results/
 .qa/
 .reports/
+.superpowers/
+next-env.d.ts
 .DS_Store

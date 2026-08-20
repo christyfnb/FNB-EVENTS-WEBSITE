@@ -28,6 +28,7 @@ export type MediaAsset = {
   aspectRatio: number
   bytes: number
   sha256: string
+  sourceSha256: string
 }
 
 export const mediaRegistry = runtimeMedia as readonly MediaAsset[]

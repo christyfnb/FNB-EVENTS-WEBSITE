@@ -30,6 +30,7 @@ function runtimeRecord(overrides = {}) {
     height: 1024,
     bytes: 2048,
     sha256: HASH_A,
+    sourceSha256: HASH_A,
     publicationStatus: 'approved-for-runtime',
     truthClassification: 'conceptual-generated-capability-imagery',
     brandApprovalStatus: 'owner-categorized-source',
@@ -66,14 +67,24 @@ test('approved runtime media satisfies inventory, denylist, deduplication, and t
   assert.equal(result.counts.runtimeEntries, result.counts.runtimeFiles)
 })
 
-test('rejects a runtime SHA-256 that does not match its declared source inventory record', () => {
+test('rejects a declared sourceSha256 that does not match original source inventory record', () => {
   const result = auditMediaRecords({
-    inventory: [sourceRecord()],
+    inventory: [sourceRecord({ sha256: HASH_A })],
     denylist: [],
-    runtime: [runtimeRecord({ sha256: HASH_B })],
+    runtime: [runtimeRecord({ sourceSha256: HASH_B })],
   })
 
-  assert.ok(result.errors.includes('Runtime SHA-256 does not match declared source: home-example'))
+  assert.ok(result.errors.includes('Runtime sourceSha256 does not match approved source inventory record: home-example'))
+})
+
+test('rejects copying an optimized runtime hash into the source hash field when bytes differ', () => {
+  const result = auditMediaRecords({
+    inventory: [sourceRecord({ sha256: HASH_A, bytes: 4096 })],
+    denylist: [],
+    runtime: [runtimeRecord({ sha256: HASH_B, sourceSha256: HASH_B, bytes: 2048 })],
+  })
+
+  assert.ok(result.errors.includes('Runtime sourceSha256 does not match approved source inventory record: home-example'))
 })
 
 test('rejects a 36th runtime manifest entry', () => {

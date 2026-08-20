@@ -133,7 +133,11 @@ async function evaluate(cdp, expression) {
 }
 
 async function navigate(cdp, url) {
-  const loaded = cdp.once('Page.loadEventFired')
+  const loaded = Promise.race([
+    cdp.once('Page.loadEventFired'),
+    cdp.once('Page.domContentEventFired'),
+    cdp.once('Page.frameStoppedLoading'),
+  ])
   await cdp.send('Page.navigate', { url })
   await loaded
   await delay(350)
@@ -198,7 +202,7 @@ function stateErrors(route, size, state, requireHomeSections = false) {
   return errors
 }
 
-async function runBrowserQa({ baseUrl, browserExecutable, artifactDir }) {
+export async function runBrowserQa({ baseUrl, browserExecutable, artifactDir, blockRsc = false }) {
   await mkdir(artifactDir, { recursive: true })
   const debugPort = Number(argument('--debug-port') ?? 9236)
   const profileDir = join(artifactDir, 'chromium-profile')
@@ -220,6 +224,7 @@ async function runBrowserQa({ baseUrl, browserExecutable, artifactDir }) {
   const report = {
     startedAt: new Date().toISOString(),
     baseUrl,
+    mode: blockRsc ? 'DIAGNOSTIC_LOW_CONCURRENCY_RSC_BLOCKED' : 'NORMAL_PRODUCTION_QA',
     browser: basename(browserExecutable),
     viewports: VIEWPORTS,
     routeChecks: [],
@@ -241,6 +246,9 @@ async function runBrowserQa({ baseUrl, browserExecutable, artifactDir }) {
       cdp.send('Log.enable'),
       cdp.send('Network.enable'),
     ])
+    if (blockRsc) {
+      await cdp.send('Network.setBlockedURLs', { urls: ['*?_rsc=*', '*_rsc*'] })
+    }
     let currentCheck = 'startup'
     cdp.on('Runtime.exceptionThrown', (params) => report.consoleErrors.push({ check: currentCheck, type: 'exception', text: params.exceptionDetails?.text ?? 'Runtime exception' }))
     cdp.on('Log.entryAdded', ({ entry }) => {
@@ -424,16 +432,17 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const baseUrl = argument('--base-url')
   const browserExecutable = argument('--browser-executable')
   const artifactDir = resolve(argument('--artifact-dir') ?? '.superpowers/sdd/owner-execution-unlock/task-6-qa')
+  const blockRsc = process.argv.includes('--block-rsc')
   if (!baseUrl || !browserExecutable) {
-    console.error('Usage: node scripts/browser-qa.mjs --base-url <owned-server> --browser-executable <installed Chromium/Edge> [--artifact-dir <ignored-path>]')
+    console.error('Usage: node scripts/browser-qa.mjs --base-url <owned-server> --browser-executable <installed Chromium/Edge> [--artifact-dir <ignored-path>] [--block-rsc]')
     process.exitCode = 1
   } else {
-    const report = await runBrowserQa({ baseUrl, browserExecutable, artifactDir })
+    const report = await runBrowserQa({ baseUrl, browserExecutable, artifactDir, blockRsc })
     if (report.errors.length) {
       console.error(report.errors.map((error) => `- ${error}`).join('\n'))
       process.exitCode = 1
     } else {
-      console.log(`Browser QA passed: ${report.routeChecks.length} rendered route/viewport checks and ${report.interactions.length} interaction checks`)
+      console.log(`Browser QA (${report.mode}) passed: ${report.routeChecks.length} rendered route/viewport checks and ${report.interactions.length} interaction checks`)
     }
   }
 }

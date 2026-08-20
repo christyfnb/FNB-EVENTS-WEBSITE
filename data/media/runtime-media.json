@@ -20,8 +20,9 @@
     "width": 1254,
     "height": 1254,
     "aspectRatio": 1,
-    "bytes": 3303763,
-    "sha256": "025d162ade349db749358efea40e20f00c2a5ee3e0d8745534666a59af43b712"
+    "bytes": 265138,
+    "sha256": "795f77517c623e3109756815e69b966d1adef7abca919419f4ccc1a78ef6a0ad",
+    "sourceSha256": "025d162ade349db749358efea40e20f00c2a5ee3e0d8745534666a59af43b712"
   },
   {
     "id": "home-hero-stage",
@@ -43,8 +44,9 @@
     "width": 1536,
     "height": 1024,
     "aspectRatio": 1.5,
-    "bytes": 1338233,
-    "sha256": "961c886b49d8992995d8edce096e576e6873a6021da69b8d75c896816994b151"
+    "bytes": 508605,
+    "sha256": "82b199feec195e7e5baaf46102b4976897d4ae23c2d7c5c80f4e9db5fae7319c",
+    "sourceSha256": "961c886b49d8992995d8edce096e576e6873a6021da69b8d75c896816994b151"
   },
   {
     "id": "home-editorial-skyline",
@@ -66,8 +68,9 @@
     "width": 1672,
     "height": 941,
     "aspectRatio": 1.776833,
-    "bytes": 2339829,
-    "sha256": "ce0f9ca9c9692cf492b7cadb8fcf1a4e66e2a9fbde2da9e6fd509fe068bce686"
+    "bytes": 889137,
+    "sha256": "fa0ec99f5497ab3ebd4e8978d39d5f1df4621a68f29a609d6918bcfc70b05776",
+    "sourceSha256": "ce0f9ca9c9692cf492b7cadb8fcf1a4e66e2a9fbde2da9e6fd509fe068bce686"
   },
   {
     "id": "capability-exhibition-studio",
@@ -89,8 +92,9 @@
     "width": 1672,
     "height": 941,
     "aspectRatio": 1.776833,
-    "bytes": 2129018,
-    "sha256": "eb3db73a9d049e83ba276717198283b24ddf6664f1e5d85f42f09f676ef9879e"
+    "bytes": 917966,
+    "sha256": "1c4d26679b1235bfb8eb91c1ea9fd1f0ea861222cd5ac2d4fc309845a2f9862e",
+    "sourceSha256": "eb3db73a9d049e83ba276717198283b24ddf6664f1e5d85f42f09f676ef9879e"
   },
   {
     "id": "process-booth-build",
@@ -113,8 +117,9 @@
     "width": 1536,
     "height": 1024,
     "aspectRatio": 1.5,
-    "bytes": 2465149,
-    "sha256": "b22b268e10ab839fcef1646c3fe6f1dc3ff62f5010f53eefae7b56f82ed983ea"
+    "bytes": 857596,
+    "sha256": "c7585fc38766f9bceb4079fbc88f740b623242e0a5903bd77d7c34c46191a2db",
+    "sourceSha256": "b22b268e10ab839fcef1646c3fe6f1dc3ff62f5010f53eefae7b56f82ed983ea"
   },
   {
     "id": "capability-event-keynote",
@@ -137,8 +142,9 @@
     "width": 1536,
     "height": 1024,
     "aspectRatio": 1.5,
-    "bytes": 1745918,
-    "sha256": "2538949ac8ac9d958b449768692727255cc586020318f447103c86394cbc1737"
+    "bytes": 784892,
+    "sha256": "7f9f07a2e6e166fbea8650086065105bb36e267c26d21fe0d31db0d2ab1a4ac7",
+    "sourceSha256": "2538949ac8ac9d958b449768692727255cc586020318f447103c86394cbc1737"
   },
   {
     "id": "capability-branding-lobby",
@@ -160,8 +166,9 @@
     "width": 1536,
     "height": 1024,
     "aspectRatio": 1.5,
-    "bytes": 2078944,
-    "sha256": "831c1bd2e102e57f16e0aa1dc3ab87858a67149cefe91591ceb93a2aebef4f78"
+    "bytes": 895565,
+    "sha256": "8b0870e2eec72b05adcc553976a6a9525aa546617e078fb65572b75b1d9b20f5",
+    "sourceSha256": "831c1bd2e102e57f16e0aa1dc3ab87858a67149cefe91591ceb93a2aebef4f78"
   },
   {
     "id": "capability-technical-control",
@@ -183,8 +190,9 @@
     "width": 1536,
     "height": 1024,
     "aspectRatio": 1.5,
-    "bytes": 2054299,
-    "sha256": "d84c611946e498c164283b9eb45195de4a7ac19dba3ac1ede0101cd706a1d889"
+    "bytes": 810677,
+    "sha256": "4ba38cd93e2b1a867cca4f2bee38f2684272cdb2546b1fef587e27443c41faf9",
+    "sourceSha256": "d84c611946e498c164283b9eb45195de4a7ac19dba3ac1ede0101cd706a1d889"
   },
   {
     "id": "capability-digital-dashboard",
@@ -207,8 +215,9 @@
     "width": 1122,
     "height": 1402,
     "aspectRatio": 0.800285,
-    "bytes": 1811537,
-    "sha256": "b0e0aa2f6f2d119b233ef9faf0e0c11cd15615141111401c93ecd96fe7afd15f"
+    "bytes": 797418,
+    "sha256": "a58633a8c88af60f110835a12c64d1d2fb45d89d3bfc9943dcbfd416edfd301f",
+    "sourceSha256": "b0e0aa2f6f2d119b233ef9faf0e0c11cd15615141111401c93ecd96fe7afd15f"
   },
   {
     "id": "capability-automation-analytics",
@@ -230,8 +239,9 @@
     "width": 1122,
     "height": 1402,
     "aspectRatio": 0.800285,
-    "bytes": 1930122,
-    "sha256": "40ea2267e0c1d50e564bcdc74a3613ab4521ad2000ad0449feba5539f5387b12"
+    "bytes": 835506,
+    "sha256": "957e7fc98c1d88a13f15d4ad994b92b066afa55f1e213f810c929a69c6f34ef9",
+    "sourceSha256": "40ea2267e0c1d50e564bcdc74a3613ab4521ad2000ad0449feba5539f5387b12"
   },
   {
     "id": "capability-ai-pavilion",
@@ -253,8 +263,9 @@
     "width": 1536,
     "height": 1024,
     "aspectRatio": 1.5,
-    "bytes": 2174458,
-    "sha256": "9c118e6d817e459d29a6b17e2121b5c76eba56a3d8f2e23ce4d121eaea3db742"
+    "bytes": 882409,
+    "sha256": "60c31614832363b0693296cd06044779d761b33696bd0f2ffa0a2364548dd5d9",
+    "sourceSha256": "9c118e6d817e459d29a6b17e2121b5c76eba56a3d8f2e23ce4d121eaea3db742"
   },
   {
     "id": "capability-interiors-lobby",
@@ -277,8 +288,9 @@
     "width": 1536,
     "height": 1024,
     "aspectRatio": 1.5,
-    "bytes": 2331507,
-    "sha256": "a35efbc9ffb2a24fcd8f2be22bfe24325a5874b4ec0fd85f899d5321dd41674b"
+    "bytes": 1010889,
+    "sha256": "e808e347deb49ccd92c1d2b97ec03c44cde700d6ed5fead39e2083ad630938d7",
+    "sourceSha256": "a35efbc9ffb2a24fcd8f2be22bfe24325a5874b4ec0fd85f899d5321dd41674b"
   },
   {
     "id": "team-portrait-01",
@@ -300,8 +312,9 @@
     "width": 933,
     "height": 1400,
     "aspectRatio": 0.666429,
-    "bytes": 139645,
-    "sha256": "fd48eb9601209e729b199ca039816d660e127bbf48dbb9e2440d2b2a429e7916"
+    "bytes": 127326,
+    "sha256": "e7da9bc2bd818f25c45d034abf950bbcb1603f3b127aae4a12659d0784f075a9",
+    "sourceSha256": "fd48eb9601209e729b199ca039816d660e127bbf48dbb9e2440d2b2a429e7916"
   },
   {
     "id": "team-portrait-02",
@@ -323,8 +336,9 @@
     "width": 942,
     "height": 1400,
     "aspectRatio": 0.672857,
-    "bytes": 127538,
-    "sha256": "7c332e8b974cb39fb19a64ae300fa68847555cd2fbf2949f05fc9e9435dbd1c7"
+    "bytes": 114874,
+    "sha256": "d6b618765a7e37c9d235e60df055431e40641e655f8c960e43bf946031af0d8c",
+    "sourceSha256": "7c332e8b974cb39fb19a64ae300fa68847555cd2fbf2949f05fc9e9435dbd1c7"
   },
   {
     "id": "team-portrait-03",
@@ -346,8 +360,9 @@
     "width": 764,
     "height": 1400,
     "aspectRatio": 0.545714,
-    "bytes": 81658,
-    "sha256": "17bced6713f77c4bacbe11134346f01ad00aaef02b73e5450d906462911c4fac"
+    "bytes": 72872,
+    "sha256": "6e2211289681873141fe4264dc4440747380d20089b23308fd3b7f3ac7985713",
+    "sourceSha256": "17bced6713f77c4bacbe11134346f01ad00aaef02b73e5450d906462911c4fac"
   },
   {
     "id": "team-portrait-04",
@@ -369,8 +384,9 @@
     "width": 646,
     "height": 1400,
     "aspectRatio": 0.461429,
-    "bytes": 101770,
-    "sha256": "37e22b96b4b622ac2633583535b9defe8bf4a3bdd238abca697d6ef0f0e6067f"
+    "bytes": 91139,
+    "sha256": "6f2faf21f3b0458600c621b29a37030eb7984b42e04e253babf398701238f947",
+    "sourceSha256": "37e22b96b4b622ac2633583535b9defe8bf4a3bdd238abca697d6ef0f0e6067f"
   },
   {
     "id": "team-portrait-05",
@@ -392,8 +408,9 @@
     "width": 1050,
     "height": 1400,
     "aspectRatio": 0.75,
-    "bytes": 155486,
-    "sha256": "1e41e44bd0a1cff7e9be800fee0e0aa0fbc3b8be940baa59a24a19b303c53387"
+    "bytes": 141031,
+    "sha256": "c94c6c38dbae7c3bc6bb351ed8b529f7511023a0b4c77eba265773ce747e730c",
+    "sourceSha256": "1e41e44bd0a1cff7e9be800fee0e0aa0fbc3b8be940baa59a24a19b303c53387"
   },
   {
     "id": "team-portrait-06",
@@ -415,8 +432,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 166547,
-    "sha256": "b7172e66f858731f9a1a446815c738a3572a1a946200f789649f0598780f90fb"
+    "bytes": 157462,
+    "sha256": "d46221b138d60539c32e8dfe238395be53d80dc504971ee94cc28b5747b27c7d",
+    "sourceSha256": "b7172e66f858731f9a1a446815c738a3572a1a946200f789649f0598780f90fb"
   },
   {
     "id": "team-portrait-07",
@@ -438,8 +456,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 152683,
-    "sha256": "2b4445bbd6ab267a8d83f2f4c38b726b3ca200fda8db255e51c06686a68b66e5"
+    "bytes": 143092,
+    "sha256": "e948066d0bc6bab81c76d23789ddf4cf783ddd84914a22beb080632c7510994b",
+    "sourceSha256": "2b4445bbd6ab267a8d83f2f4c38b726b3ca200fda8db255e51c06686a68b66e5"
   },
   {
     "id": "team-portrait-08",
@@ -461,8 +480,9 @@
     "width": 996,
     "height": 1400,
     "aspectRatio": 0.711429,
-    "bytes": 92427,
-    "sha256": "6a795b17cf343d98eaa5360572f9a1ab69b787c518f1b0f1bfb44a2d80818870"
+    "bytes": 83887,
+    "sha256": "27e37ddeb593656e6c7a86144b5346f0a0b2f20bce56a54278ddd782215aa867",
+    "sourceSha256": "6a795b17cf343d98eaa5360572f9a1ab69b787c518f1b0f1bfb44a2d80818870"
   },
   {
     "id": "team-portrait-09",
@@ -484,8 +504,9 @@
     "width": 788,
     "height": 1400,
     "aspectRatio": 0.562857,
-    "bytes": 144196,
-    "sha256": "86c3f0f0011c0ae6f12420318df8a6db4bcdb1234fdf95e03a5e4c95309b8871"
+    "bytes": 132021,
+    "sha256": "5615a6b1828aa286da8d7dc0beb6b38080459ad9e8b31ccf4af001126f588d17",
+    "sourceSha256": "86c3f0f0011c0ae6f12420318df8a6db4bcdb1234fdf95e03a5e4c95309b8871"
   },
   {
     "id": "team-portrait-10",
@@ -507,8 +528,9 @@
     "width": 920,
     "height": 1400,
     "aspectRatio": 0.657143,
-    "bytes": 147026,
-    "sha256": "6915aba17e9453a4bebf2e91a477931ff985ba7a7a55d91b91c7b2fcb353b0a9"
+    "bytes": 134420,
+    "sha256": "b969cb2fb522c288a6ab99c4e5ceeb539936adbafcdf9c01ef7e1e107d7bb3e5",
+    "sourceSha256": "6915aba17e9453a4bebf2e91a477931ff985ba7a7a55d91b91c7b2fcb353b0a9"
   },
   {
     "id": "team-portrait-11",
@@ -530,8 +552,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 204201,
-    "sha256": "9c98faf10d3870b329147b72184aa879e0e9a0a0b3ce859294b10f6639c5efa7"
+    "bytes": 189236,
+    "sha256": "7622d0de6bdcac1c609467b45d04f1395dea862ea6018817d611bb4c2c54a4b9",
+    "sourceSha256": "9c98faf10d3870b329147b72184aa879e0e9a0a0b3ce859294b10f6639c5efa7"
   },
   {
     "id": "team-portrait-12",
@@ -553,8 +576,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 259058,
-    "sha256": "a25d5d1208a477233db77be30e5ce23e23321fb54c7b48e33abf0d4d2cc741b4"
+    "bytes": 243350,
+    "sha256": "e02b8ba3f223dfa6a2e8dbedf2744c58108f837c6071ddb018041310517bca5f",
+    "sourceSha256": "a25d5d1208a477233db77be30e5ce23e23321fb54c7b48e33abf0d4d2cc741b4"
   },
   {
     "id": "team-portrait-13",
@@ -576,8 +600,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 129906,
-    "sha256": "5102ef382adc22833e27a4d1d1e483e66f0ebb2c59b184e8e0ff3ca82e7108c1"
+    "bytes": 116328,
+    "sha256": "298e2029353280ce93a2912e2fd95b407371ef701824669126bbb62cf7f312f5",
+    "sourceSha256": "5102ef382adc22833e27a4d1d1e483e66f0ebb2c59b184e8e0ff3ca82e7108c1"
   },
   {
     "id": "team-portrait-14",
@@ -599,8 +624,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 122825,
-    "sha256": "0246d97e9202cc80e0a6d7b1657d0d5548c5366daf02a4fec1af8d232c7db499"
+    "bytes": 109575,
+    "sha256": "d4a28f5fbfc753595308abd21cce0af84a4a3145d19cb33e6eb1bb3017866cbb",
+    "sourceSha256": "0246d97e9202cc80e0a6d7b1657d0d5548c5366daf02a4fec1af8d232c7db499"
   },
   {
     "id": "team-portrait-15",
@@ -622,8 +648,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 160199,
-    "sha256": "c431d31a5083436bbd82eba185794b2c555f8e5d569ecb73dddc9cfb4521003c"
+    "bytes": 143651,
+    "sha256": "64ef3f307ffd09f1a916e5fa68ca868a045c90937164ade43bd3b76629eef7cc",
+    "sourceSha256": "c431d31a5083436bbd82eba185794b2c555f8e5d569ecb73dddc9cfb4521003c"
   },
   {
     "id": "team-portrait-16",
@@ -645,8 +672,9 @@
     "width": 933,
     "height": 1400,
     "aspectRatio": 0.666429,
-    "bytes": 139091,
-    "sha256": "1174bf279ea0ae63c307abf83391e77091a7adffd8c98043d565cb939b417e9d"
+    "bytes": 128807,
+    "sha256": "413cf6bec982522fd5ad050fbb8e82b65f91126a7ffb2a42fe143eaa7840ff2c",
+    "sourceSha256": "1174bf279ea0ae63c307abf83391e77091a7adffd8c98043d565cb939b417e9d"
   },
   {
     "id": "team-portrait-17",
@@ -668,8 +696,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 151704,
-    "sha256": "86d041874b644a9514ceed2fbd4a605f74307401dcc909b3fb1dfe4b59fd81f8"
+    "bytes": 138554,
+    "sha256": "9ec8169420dd40f31cfb3de8f40673ac92b363f35c79a73dac331311f5eab1aa",
+    "sourceSha256": "86d041874b644a9514ceed2fbd4a605f74307401dcc909b3fb1dfe4b59fd81f8"
   },
   {
     "id": "team-portrait-18",
@@ -691,8 +720,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 118532,
-    "sha256": "a9c8a24a8d8fe1be20f95598209b2c97664bf0820ce98741a20f5be682e03f54"
+    "bytes": 104716,
+    "sha256": "94fcd85e7ca09b10fd21792bc5171833fbfdc9c857cc1c5755bd62e65cad7d7c",
+    "sourceSha256": "a9c8a24a8d8fe1be20f95598209b2c97664bf0820ce98741a20f5be682e03f54"
   },
   {
     "id": "team-portrait-19",
@@ -714,8 +744,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 179147,
-    "sha256": "0970773df716ec5101628b1a428d578189f821465c7ddffeba84f5dd56c834fa"
+    "bytes": 165178,
+    "sha256": "aa3fe2328fb67e8e22ece29de7d533a8096b3e5ca1179ea48f83b8a471ba76e6",
+    "sourceSha256": "0970773df716ec5101628b1a428d578189f821465c7ddffeba84f5dd56c834fa"
   },
   {
     "id": "team-portrait-20",
@@ -737,8 +768,9 @@
     "width": 1050,
     "height": 1400,
     "aspectRatio": 0.75,
-    "bytes": 96459,
-    "sha256": "5196e1475f7626ec15730ec63602c28db5140e378fe7faeb5ba4fd9ad825e3f9"
+    "bytes": 85781,
+    "sha256": "e67d2dcf5a81106c6c425d2d12ba62229e7c8db26cd42987ebcd988270c34f4b",
+    "sourceSha256": "5196e1475f7626ec15730ec63602c28db5140e378fe7faeb5ba4fd9ad825e3f9"
   },
   {
     "id": "team-portrait-21",
@@ -760,8 +792,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 136284,
-    "sha256": "4e983e65436219785fd8f90750510c093feecd62796c1022fe50df492a0732e9"
+    "bytes": 120795,
+    "sha256": "23f78b7c40183ffb1571c94aef23bf1be528758dd07b5a11d2b02983ddf1ba83",
+    "sourceSha256": "4e983e65436219785fd8f90750510c093feecd62796c1022fe50df492a0732e9"
   },
   {
     "id": "team-portrait-22",
@@ -783,8 +816,9 @@
     "width": 1129,
     "height": 1400,
     "aspectRatio": 0.806429,
-    "bytes": 193547,
-    "sha256": "ff0cbb30c396baee3591f884c433eff2842f3e68274dd9c71105e8c7b54a4825"
+    "bytes": 174917,
+    "sha256": "334801ebf68dfb6f5eec61be27c315dc7471bef63003fb7974f0beb4b01b747a",
+    "sourceSha256": "ff0cbb30c396baee3591f884c433eff2842f3e68274dd9c71105e8c7b54a4825"
   },
   {
     "id": "team-portrait-23",
@@ -806,7 +840,8 @@
     "width": 1050,
     "height": 1400,
     "aspectRatio": 0.75,
-    "bytes": 90731,
-    "sha256": "0d70e96307beff5f690f030e7ba4da6c4e77dae1088f04c47789b35a9037fc48"
+    "bytes": 79337,
+    "sha256": "7497b6423e8dcc0565f66a2119e9449463c63e031e47154eb9f6d46cda9cbc88",
+    "sourceSha256": "0d70e96307beff5f690f030e7ba4da6c4e77dae1088f04c47789b35a9037fc48"
   }
 ]
