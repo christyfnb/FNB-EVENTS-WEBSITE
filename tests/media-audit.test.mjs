@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { dirname, join } from 'node:path'
 import test from 'node:test'
-import { auditMedia, auditMediaRecords } from '../scripts/media-audit.mjs'
+import { auditMedia, auditMediaRecords, auditPublicMedia } from '../scripts/media-audit.mjs'
 
 const HASH_A = 'a'.repeat(64)
 const HASH_B = 'b'.repeat(64)
@@ -31,6 +35,25 @@ function runtimeRecord(overrides = {}) {
     brandApprovalStatus: 'owner-categorized-source',
     ...overrides,
   }
+}
+
+function withPublicFixture(files, run) {
+  const fixtureRoot = mkdtempSync(join(tmpdir(), 'fnb-public-media-audit-'))
+  const publicRoot = join(fixtureRoot, 'public')
+  try {
+    for (const [path, bytes] of Object.entries(files)) {
+      const absolutePath = join(publicRoot, path)
+      mkdirSync(dirname(absolutePath), { recursive: true })
+      writeFileSync(absolutePath, bytes)
+    }
+    return run(publicRoot)
+  } finally {
+    rmSync(fixtureRoot, { recursive: true, force: true })
+  }
+}
+
+function hash(bytes) {
+  return createHash('sha256').update(bytes).digest('hex')
 }
 
 test('approved runtime media satisfies inventory, denylist, deduplication, and team-source policy', () => {
@@ -82,4 +105,51 @@ test('rejects blocked source eligibility and unsupported truth classification', 
 
   assert.ok(result.errors.includes('Runtime source is not eligible: home-example (blocked-team-master)'))
   assert.ok(result.errors.includes('Unsupported truth classification: home-example (fabricated-proof)'))
+})
+
+test('rejects unregistered deployable media outside the canonical media directory', () => {
+  const registeredBytes = Buffer.from('registered-image')
+  const result = withPublicFixture(
+    {
+      'media/fnb/home/example.png': registeredBytes,
+      'images/stray.png': Buffer.from('unregistered-image'),
+    },
+    (publicRoot) =>
+      auditPublicMedia({
+        publicRoot,
+        runtime: [runtimeRecord({ runtimePath: '/media/fnb/home/example.png', bytes: registeredBytes.length, sha256: hash(registeredBytes) })],
+        prohibitedHashes: new Set(),
+      }),
+  )
+
+  assert.ok(result.errors.includes('Unregistered public media: /images/stray.png'))
+})
+
+test('rejects any stray public MP4', () => {
+  const result = withPublicFixture({ 'legacy/promo.mp4': Buffer.from('video-bytes') }, (publicRoot) =>
+    auditPublicMedia({ publicRoot, runtime: [], prohibitedHashes: new Set() }),
+  )
+
+  assert.ok(result.errors.includes('Unapproved public video: /legacy/promo.mp4'))
+  assert.ok(result.errors.includes('Unregistered public media: /legacy/promo.mp4'))
+})
+
+test('rejects duplicate media bytes anywhere under public', () => {
+  const bytes = Buffer.from('duplicate-image')
+  const result = withPublicFixture(
+    {
+      'media/fnb/home/example.png': bytes,
+      'images/duplicate.png': bytes,
+    },
+    (publicRoot) =>
+      auditPublicMedia({
+        publicRoot,
+        runtime: [runtimeRecord({ runtimePath: '/media/fnb/home/example.png', bytes: bytes.length, sha256: hash(bytes) })],
+        prohibitedHashes: new Set(),
+      }),
+  )
+
+  assert.ok(
+    result.errors.includes('Duplicate public media bytes: /images/duplicate.png, /media/fnb/home/example.png'),
+  )
 })

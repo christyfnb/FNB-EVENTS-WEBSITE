@@ -7,8 +7,31 @@ const DEFAULT_ROOT = resolve(import.meta.dirname, '..')
 const INVENTORY_PATH = 'data/media/source-inventory.json'
 const DENYLIST_PATH = 'data/media/prohibited-sha256.json'
 const RUNTIME_PATH = 'data/media/runtime-media.json'
-const RUNTIME_ROOT = 'public/media/fnb'
 const EXPECTED_RUNTIME_ENTRIES = 35
+const PUBLIC_MEDIA_EXTENSIONS = new Set([
+  '.avif',
+  '.bmp',
+  '.gif',
+  '.heic',
+  '.heif',
+  '.ico',
+  '.jpeg',
+  '.jpg',
+  '.jxl',
+  '.m4v',
+  '.mov',
+  '.mp4',
+  '.mpeg',
+  '.mpg',
+  '.ogv',
+  '.png',
+  '.svg',
+  '.tif',
+  '.tiff',
+  '.webm',
+  '.webp',
+])
+const PUBLIC_VIDEO_EXTENSIONS = new Set(['.m4v', '.mov', '.mp4', '.mpeg', '.mpg', '.ogv', '.webm'])
 const ELIGIBLE_SOURCE_STATUSES = new Set(['source-eligible', 'source-eligible-portrait'])
 const TRUTH_CLASSIFICATIONS = new Set([
   'official-brand-asset',
@@ -89,6 +112,7 @@ export function auditMediaRecords({ inventory, denylist, runtime }) {
     if (!item.id || !item.sourcePath || !item.runtimePath) {
       errors.push(`Runtime registry entry is missing required identity fields: ${JSON.stringify(item)}`)
     }
+    if (!item.runtimePath?.startsWith('/media/fnb/')) errors.push(`Runtime path is outside canonical media root: ${item.runtimePath}`)
     const source = inventoryByPath.get(item.sourcePath)
     if (!source) {
       errors.push(`Runtime source is absent from inventory: ${item.sourcePath}`)
@@ -134,6 +158,51 @@ export function auditMediaRecords({ inventory, denylist, runtime }) {
   }
 }
 
+export function auditPublicMedia({ publicRoot, runtime, prohibitedHashes }) {
+  const errors = []
+  const runtimeByPath = new Map(runtime.map((item) => [item.runtimePath, item]))
+  const publicFiles = walkFiles(publicRoot).filter((path) => PUBLIC_MEDIA_EXTENSIONS.has(extname(path).toLowerCase()))
+  const publicPaths = new Set()
+  const pathsByHash = new Map()
+
+  for (const path of publicFiles) {
+    const runtimePath = `/${relative(publicRoot, path).replaceAll('\\', '/')}`
+    const extension = extname(path).toLowerCase()
+    const diskHash = sha256(path)
+    const diskBytes = statSync(path).size
+    const item = runtimeByPath.get(runtimePath)
+    publicPaths.add(runtimePath)
+
+    const matchingPaths = pathsByHash.get(diskHash) ?? []
+    matchingPaths.push(runtimePath)
+    pathsByHash.set(diskHash, matchingPaths)
+
+    if (PUBLIC_VIDEO_EXTENSIONS.has(extension)) errors.push(`Unapproved public video: ${runtimePath}`)
+    if (!item) {
+      errors.push(`Unregistered public media: ${runtimePath}`)
+      continue
+    }
+    if (diskBytes !== item.bytes) errors.push(`Byte-size mismatch: ${runtimePath}`)
+    if (diskHash !== item.sha256) errors.push(`SHA-256 mismatch: ${runtimePath}`)
+    if (prohibitedHashes.has(diskHash)) errors.push(`Runtime file matches prohibited content: ${runtimePath}`)
+  }
+
+  for (const runtimePath of runtimeByPath.keys()) {
+    if (!publicPaths.has(runtimePath)) errors.push(`Registered runtime media absent from disk: ${runtimePath}`)
+  }
+  for (const paths of pathsByHash.values()) {
+    if (paths.length > 1) errors.push(`Duplicate public media bytes: ${paths.sort().join(', ')}`)
+  }
+
+  return {
+    errors,
+    counts: {
+      publicMediaFiles: publicFiles.length,
+      publicVideos: publicFiles.filter((path) => PUBLIC_VIDEO_EXTENSIONS.has(extname(path).toLowerCase())).length,
+    },
+  }
+}
+
 export function auditMedia(root = DEFAULT_ROOT) {
   const manifestErrors = []
   const inventory = readJson(root, INVENTORY_PATH, manifestErrors)
@@ -141,43 +210,26 @@ export function auditMedia(root = DEFAULT_ROOT) {
   const runtime = readJson(root, RUNTIME_PATH, manifestErrors)
   const recordAudit = auditMediaRecords({ inventory, denylist, runtime })
   const errors = [...manifestErrors, ...recordAudit.errors]
-  const runtimeRoot = join(root, RUNTIME_ROOT)
+  const publicAudit = auditPublicMedia({
+    publicRoot: join(root, 'public'),
+    runtime,
+    prohibitedHashes: recordAudit.prohibitedHashes,
+  })
+  errors.push(...publicAudit.errors)
 
   if (inventory.length !== 76) errors.push(`Expected 76 source inventory entries; found ${inventory.length}`)
   if (denylist.length !== 26) errors.push(`Expected 26 prohibited hashes; found ${denylist.length}`)
   if (recordAudit.counts.portraits !== 23) errors.push(`Expected all 23 web-optimized portraits; found ${recordAudit.counts.portraits}`)
-
-  for (const item of runtime) {
-    const diskPath = join(root, 'public', item.runtimePath.replace(/^\//, ''))
-    if (!existsSync(diskPath)) {
-      errors.push(`Missing runtime file: ${item.runtimePath}`)
-      continue
-    }
-    if (statSync(diskPath).size !== item.bytes) errors.push(`Byte-size mismatch: ${item.runtimePath}`)
-    const diskHash = sha256(diskPath)
-    if (diskHash !== item.sha256) errors.push(`SHA-256 mismatch: ${item.runtimePath}`)
-    if (recordAudit.prohibitedHashes.has(diskHash)) errors.push(`Runtime file matches prohibited content: ${item.runtimePath}`)
+  if (publicAudit.counts.publicMediaFiles !== EXPECTED_RUNTIME_ENTRIES) {
+    errors.push(`Expected exactly ${EXPECTED_RUNTIME_ENTRIES} deployable public media files; found ${publicAudit.counts.publicMediaFiles}`)
   }
-
-  const diskFiles = walkFiles(runtimeRoot).filter((path) => ['.jpg', '.jpeg', '.png', '.webp', '.avif'].includes(extname(path).toLowerCase()))
-  const diskPaths = new Set(diskFiles.map((path) => `/${relative(join(root, 'public'), path).replaceAll('\\', '/')}`))
-  for (const path of diskPaths) {
-    if (!recordAudit.runtimePaths.has(path)) errors.push(`Unregistered runtime media: ${path}`)
-  }
-  for (const path of recordAudit.runtimePaths) {
-    if (!diskPaths.has(path)) errors.push(`Registered runtime media absent from disk: ${path}`)
-  }
-
-  const diskHashes = diskFiles.map(sha256)
-  if (new Set(diskHashes).size !== diskHashes.length) errors.push('Runtime media contains byte-identical duplicate files')
-  if (diskFiles.some((path) => /02-Master/i.test(path))) errors.push('Runtime hierarchy contains a team master path')
-  if (walkFiles(runtimeRoot).some((path) => extname(path).toLowerCase() === '.mp4')) errors.push('Runtime hierarchy contains an unapproved video')
 
   return {
     errors,
     counts: {
       ...recordAudit.counts,
-      runtimeFiles: diskFiles.length,
+      runtimeFiles: publicAudit.counts.publicMediaFiles,
+      publicVideos: publicAudit.counts.publicVideos,
     },
   }
 }
