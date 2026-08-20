@@ -16,6 +16,7 @@ export default defineConfig([
     ".qa/**",
     ".reports/**",
     ".superpowers/**",
+    ".agents/**",
     "next-env.d.ts",
   ]),
 ])
