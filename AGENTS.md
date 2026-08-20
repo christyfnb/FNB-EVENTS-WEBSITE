@@ -44,6 +44,12 @@ Read the relevant global skill before acting:
 
 When several apply, use the smallest set that covers the task and reconcile their guidance against this file and the approved flagship document.
 
+## FNB Frontend Skill Router
+
+- Specialist skills are loaded dynamically based on explicit task requirements; generic framework guidance never overrides FNB visual and business authority.
+- Technology implementation priority: `HTML/CSS → GSAP → ScrollTrigger → Canvas sequence → Three.js/WebGL`.
+- Increased visual or 3D complexity must be explicitly justified by storytelling purpose, performance budgets, accessibility fallbacks, and mobile responsiveness.
+
 ## Dependencies and package management
 
 - Use pnpm and the committed lockfile. Reproducible installs use `pnpm install --frozen-lockfile`.
