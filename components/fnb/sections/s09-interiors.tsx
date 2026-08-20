@@ -1,78 +1,79 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MediaSlot } from '@/components/fnb/media-slot'
 import { INTERIORS, MEDIA } from '@/lib/content'
 
-const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
-
-function subscribeToReducedMotion(onStoreChange: () => void) {
-  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY)
-  mediaQuery.addEventListener('change', onStoreChange)
-  return () => mediaQuery.removeEventListener('change', onStoreChange)
-}
-
-function getReducedMotionSnapshot() {
-  return window.matchMedia(REDUCED_MOTION_QUERY).matches
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
 }
 
 /**
- * S09 INTERIORS — MediaSequence.
- * Full-bleed architectural image with the FNB Signal as a floor-plan
- * line: plan lines draw in, then cross-fade to the finished space.
- * Two states only. Reduced motion shows the finished space.
+ * S09 INTERIORS & COMMERCIAL SPACES.
+ * Architectural spatial presentation featuring bounded camera pan (`xPercent: 0 → -4`).
+ * Truth-safe classification: CONCEPTUAL_CAPABILITY_MEDIA.
+ *
+ * A11y & Performance:
+ * - Camera pan executes via GSAP ScrollTrigger transform on desktop (≥1024px).
+ * - Image frame retains overflow-hidden.
+ * - Mobile & prefers-reduced-motion render static architectural image.
  */
 export function S09Interiors() {
-  const ref = useRef<HTMLElement>(null)
-  const [revealed, setRevealed] = useState(false)
-  const reduced = useSyncExternalStore(subscribeToReducedMotion, getReducedMotionSnapshot, () => false)
+  const sectionRef = useRef<HTMLElement>(null)
+  const imageFrameRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (reduced) {
-      return
-    }
-    const el = ref.current
-    if (!el) return
-    let revealTimer: ReturnType<typeof setTimeout> | undefined
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          // plan draws first, finished space fades in after
-          revealTimer = setTimeout(() => setRevealed(true), 1400)
-          observer.disconnect()
-        }
-      },
-      { threshold: 0.35 },
-    )
-    observer.observe(el)
-    return () => {
-      observer.disconnect()
-      if (revealTimer) clearTimeout(revealTimer)
-    }
-  }, [reduced])
+    const section = sectionRef.current
+    const imageFrame = imageFrameRef.current
+    if (!section || !imageFrame) return
 
-  const isRevealed = reduced || revealed
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reducedMotion) return
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia()
+
+      mm.add('(min-width: 1024px)', () => {
+        gsap.fromTo(
+          imageFrame,
+          { xPercent: 0 },
+          {
+            xPercent: -4,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            },
+          },
+        )
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <section ref={ref} id="s09-interiors" aria-labelledby="s09-heading" className="relative border-t border-steel/40 bg-void">
-      <div className="relative aspect-[4/5] w-full sm:aspect-video sm:max-h-[85vh]">
-        {/* Conceptual finished-space capability image. */}
-        <div className={`absolute inset-0 transition-opacity duration-[480ms] ${isRevealed ? 'opacity-100' : 'opacity-40'}`}>
+    <section ref={sectionRef} id="s09-interiors" aria-labelledby="s09-heading" className="relative border-t border-steel/40 bg-void">
+      <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-video sm:max-h-[85vh]">
+        {/* Conceptual spatial capability image inside bounded camera pan frame */}
+        <div ref={imageFrameRef} className="absolute inset-0 h-full w-[105%] will-change-transform">
           <MediaSlot
             asset={MEDIA.interiorSpace}
-            className="h-full w-full"
+            className="h-full w-full object-cover"
             sizes="100vw"
           />
         </div>
 
-        {/* Plan overlay in Signal colour — decorative */}
+        {/* Architectural plan overlay in Signal color — decorative */}
         <svg
           aria-hidden="true"
           viewBox="0 0 1200 675"
-          className={`pointer-events-none absolute inset-0 h-full w-full transition-opacity duration-[640ms] ${
-            isRevealed ? 'opacity-15' : 'opacity-90'
-          }`}
+          className="pointer-events-none absolute inset-0 h-full w-full opacity-25"
           preserveAspectRatio="xMidYMid slice"
         >
           <g stroke="var(--fnb-signal)" strokeWidth="1.5" fill="none">
@@ -87,7 +88,7 @@ export function S09Interiors() {
         {/* Caption C1-C3 */}
         <div className="absolute bottom-0 left-0 z-10 max-w-sm p-6 sm:p-10">
           <h2 id="s09-heading" className="fnb-label text-ash">
-            Interiors
+            06 / BRAND & SPACE
           </h2>
           <p className="fnb-head mt-3 text-2xl text-warm-white md:text-3xl">{INTERIORS.caption}</p>
           <Link
@@ -97,7 +98,7 @@ export function S09Interiors() {
             {INTERIORS.cta.label} {'\u2192'}
           </Link>
         </div>
-        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-void/85 to-transparent" />
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-void/85 to-transparent pointer-events-none" />
       </div>
     </section>
   )
