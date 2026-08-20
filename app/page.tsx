@@ -1,5 +1,3 @@
-import { FNBHeader } from '@/components/fnb/fnb-header'
-import { FNBFooter } from '@/components/fnb/fnb-footer'
 import { S01Hero } from '@/components/fnb/sections/s01-hero'
 import { S02BrandStatement } from '@/components/fnb/sections/s02-brand-statement'
 import { S03SelectedWork } from '@/components/fnb/sections/s03-selected-work'
@@ -23,24 +21,50 @@ import { S14Closing } from '@/components/fnb/sections/s14-closing'
 export default function HomePage() {
   return (
     <>
-      <FNBHeader />
       <main id="main">
-        <S01Hero />
-        <S02BrandStatement />
-        <S03SelectedWork />
-        <S04ExhibitionTransformation />
-        <S05CapabilityIndex />
-        <S06EventProduction />
-        <S07PhysicalToDigital />
-        <S08DigitalCapabilities />
-        <S09Interiors />
-        <S10Industries />
-        <S11Process />
-        <S12Proof />
-        <S13Insights />
-        <S14Closing />
+        <div className="contents" data-home-section="s01-hero">
+          <S01Hero />
+        </div>
+        <div className="contents" data-home-section="s02-brand">
+          <S02BrandStatement />
+        </div>
+        <div className="contents" data-home-section="s03-work">
+          <S03SelectedWork />
+        </div>
+        <div className="contents" data-home-section="s04-transformation">
+          <S04ExhibitionTransformation />
+        </div>
+        <div className="contents" data-home-section="s05-capabilities">
+          <S05CapabilityIndex />
+        </div>
+        <div className="contents" data-home-section="s06-events">
+          <S06EventProduction />
+        </div>
+        <div className="contents" data-home-section="s07-physical-digital">
+          <S07PhysicalToDigital />
+        </div>
+        <div className="contents" data-home-section="s08-digital">
+          <S08DigitalCapabilities />
+        </div>
+        <div className="contents" data-home-section="s09-interiors">
+          <S09Interiors />
+        </div>
+        <div className="contents" data-home-section="s10-industries">
+          <S10Industries />
+        </div>
+        <div className="contents" data-home-section="s11-process">
+          <S11Process />
+        </div>
+        <div className="contents" data-home-section="s12-proof">
+          <S12Proof />
+        </div>
+        <div className="contents" data-home-section="s13-insights">
+          <S13Insights />
+        </div>
+        <div className="contents" data-home-section="s14-closing">
+          <S14Closing />
+        </div>
       </main>
-      <FNBFooter />
     </>
   )
 }

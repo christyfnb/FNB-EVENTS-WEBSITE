@@ -213,6 +213,22 @@
   color: var(--fnb-signal);
 }
 
+/* Editorial route media: restrained image movement, with truth labels always visible. */
+.fnb-editorial-media {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklch, var(--fnb-steel), transparent 25%);
+  background: var(--fnb-void);
+}
+
+.fnb-editorial-image {
+  transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fnb-editorial-media:hover .fnb-editorial-image {
+  transform: scale(1.015);
+}
+
 /* Full-width signal rule — the line at rest (S14) */
 .fnb-signal-rule {
   height: 2px;
@@ -283,5 +299,11 @@
   }
   .fnb-scroll-cue {
     animation: none;
+  }
+  .fnb-editorial-image {
+    transition: none;
+  }
+  .fnb-editorial-media:hover .fnb-editorial-image {
+    transform: none;
   }
 }

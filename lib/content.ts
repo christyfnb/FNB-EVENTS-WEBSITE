@@ -1,26 +1,15 @@
-/**
- * FNB DIGITAL FLAGSHIP — homepage content model.
- * Copy authority: docs/10-COPY-DECK.md
- * Service entities: spec/services.json (canonical, do not rename)
- *
- * MEDIA: all image/video src values point at /media/... placeholder
- * paths. Drop your real assets into public/media/ with these names
- * (or update the paths here) and they will appear site-wide.
- */
+import { FNB_MEDIA, getMedia, type MediaAsset } from '@/lib/media-registry'
+import { SERVICE_REGISTRY, type ServiceHref } from '@/lib/site-registry'
+
+/** FNB DIGITAL FLAGSHIP — homepage content model. */
 
 export const MEDIA = {
-  /** VD-01 hero film, 16:9 desktop. 18–22s seamless loop, muted. */
-  heroVideo: '/media/vd-01-hero.mp4',
-  /** IMG-001 hero poster, 16:9. Doubles as reduced-motion hero + OG image. */
-  heroPoster: '/media/img-001-hero-poster.jpg',
-  /** VD-02 event production excerpt, 12–14s silent loop. */
-  eventVideo: '/media/vd-02-event-production.mp4',
-  /** IMG-003 event operational still (poster for VD-02). */
-  eventPoster: '/media/img-003-event-still.jpg',
-  /** IMG-004 digital interface still, 16:10. Real screens only. */
-  digitalInterface: '/media/img-004-digital-interface.jpg',
-  /** IMG-005 finished interior, 16:9. */
-  interiorSpace: '/media/img-005-interior.jpg',
+  hero: FNB_MEDIA.hero,
+  editorialGateway: FNB_MEDIA.editorialGateway,
+  boothBuild: FNB_MEDIA.boothBuild,
+  eventProduction: FNB_MEDIA.eventKeynote,
+  digitalInterface: FNB_MEDIA.digitalDashboard,
+  interiorSpace: FNB_MEDIA.interiorsLobby,
 } as const
 
 export const HERO = {
@@ -38,61 +27,6 @@ export const BRAND_STATEMENT = {
     'Exhibitions, events, technical production and interiors give a brand somewhere to stand. Websites, automation and AI workflows give it somewhere to operate.',
   ],
 }
-
-export type Project = {
-  id: string
-  title: string
-  service: string
-  location: string
-  year: string
-  /** Placeholder path — drop real project photography into public/media/projects/ */
-  image: string
-  href: string
-}
-
-/**
- * S03 SELECTED WORK — REAL_REQUIRED per spec.
- * These are placeholder slots awaiting verified project data + photography.
- * Replace title/service/location/year with real cleared projects.
- */
-export const SELECTED_WORK: Project[] = [
-  {
-    id: 'project-01',
-    title: 'Project slot 01',
-    service: 'Exhibition Booth Design & Build',
-    location: 'Location',
-    year: '2026',
-    image: '/media/projects/project-01.jpg',
-    href: '/portfolio',
-  },
-  {
-    id: 'project-02',
-    title: 'Project slot 02',
-    service: 'Event Production',
-    location: 'Location',
-    year: '2026',
-    image: '/media/projects/project-02.jpg',
-    href: '/portfolio',
-  },
-  {
-    id: 'project-03',
-    title: 'Project slot 03',
-    service: 'Technical Production',
-    location: 'Location',
-    year: '2025',
-    image: '/media/projects/project-03.jpg',
-    href: '/portfolio',
-  },
-  {
-    id: 'project-04',
-    title: 'Project slot 04',
-    service: 'Interiors & Commercial Spaces',
-    location: 'Location',
-    year: '2025',
-    image: '/media/projects/project-04.jpg',
-    href: '/portfolio',
-  },
-]
 
 /** S04 stage labels — canonical, mono uppercase. */
 export const BUILD_STAGES = [
@@ -112,79 +46,20 @@ export type Capability = {
   number: string
   name: string
   problem: string
-  route: string
+  route: ServiceHref
   cluster: string
-  /** Placeholder path for the capability environment image, 16:10 */
-  image: string
+  image: MediaAsset
 }
 
 /** S05 — canonical service entities from spec/services.json + copy deck problem lines. */
-export const CAPABILITIES: Capability[] = [
-  {
-    number: '01',
-    name: 'Exhibition Booth Design & Build',
-    problem: 'You have floor space and one chance to be noticed.',
-    route: '/services/exhibition-booth-design-build',
-    cluster: 'EXPERIENCES',
-    image: '/media/capabilities/cap-01-exhibition.jpg',
-  },
-  {
-    number: '02',
-    name: 'Event Production',
-    problem: 'Hundreds of moving parts. One show with no room for improvisation.',
-    route: '/services/event-production',
-    cluster: 'EXPERIENCES',
-    image: '/media/capabilities/cap-02-events.jpg',
-  },
-  {
-    number: '03',
-    name: 'Branding & Advertising',
-    problem: 'Your brand must read the same in print, on screen and on a wall.',
-    route: '/services/branding-advertising',
-    cluster: 'BRAND & SPACE',
-    image: '/media/capabilities/cap-03-branding.jpg',
-  },
-  {
-    number: '04',
-    name: 'Technical Production',
-    problem: 'Stage, light, sound and control, planned before anyone arrives.',
-    route: '/services/technical-production',
-    cluster: 'EXPERIENCES',
-    image: '/media/capabilities/cap-04-technical.jpg',
-  },
-  {
-    number: '05',
-    name: 'Websites & Digital Experiences',
-    problem: 'The experience should not end when the venue empties.',
-    route: '/services/websites-digital-experiences',
-    cluster: 'DIGITAL SYSTEMS',
-    image: '/media/capabilities/cap-05-websites.jpg',
-  },
-  {
-    number: '06',
-    name: 'Automation Systems',
-    problem: 'Your team is doing work software should be doing.',
-    route: '/services/automation-systems',
-    cluster: 'DIGITAL SYSTEMS',
-    image: '/media/capabilities/cap-06-automation.jpg',
-  },
-  {
-    number: '07',
-    name: 'AI Workflow Solutions',
-    problem: 'Intelligence inside the workflow, with a human still deciding.',
-    route: '/services/ai-workflow-solutions',
-    cluster: 'DIGITAL SYSTEMS',
-    image: '/media/capabilities/cap-07-ai.jpg',
-  },
-  {
-    number: '08',
-    name: 'Interiors & Commercial Spaces',
-    problem: 'A permanent space that has to work commercially, not just look good.',
-    route: '/services/interiors-commercial-spaces',
-    cluster: 'BRAND & SPACE',
-    image: '/media/capabilities/cap-08-interiors.jpg',
-  },
-]
+export const CAPABILITIES: Capability[] = SERVICE_REGISTRY.map((service) => ({
+  number: service.number,
+  name: service.name,
+  problem: service.problem,
+  route: service.href,
+  cluster: service.cluster.toUpperCase(),
+  image: getMedia(service.mediaId),
+}))
 
 export const EVENT_PRODUCTION = {
   statement: 'Hundreds of moving parts. One show with no room for improvisation.',
@@ -259,12 +134,3 @@ export const CLOSING = {
   primaryCta: { label: 'Start a project', href: '/project-enquiry' },
   contactCta: { label: 'Contact', href: '/contact' },
 }
-
-export const NAV_LINKS = [
-  { label: 'Work', href: '/portfolio' },
-  { label: 'Services', href: '/services' },
-  { label: 'Industries', href: '/industries' },
-  { label: 'Process', href: '/process' },
-  { label: 'Insights', href: '/insights' },
-  { label: 'Contact', href: '/contact' },
-]

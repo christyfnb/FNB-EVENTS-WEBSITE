@@ -25,17 +25,15 @@ export function S01Hero() {
 
   return (
     <section id="s01-hero" aria-label="Hero" className="relative flex min-h-dvh flex-col justify-end overflow-hidden bg-void">
-      {/* Film background — VD-01 with IMG-001 poster fallback */}
+      {/* Source-eligible conceptual image; registry classification prevents proof claims. */}
       <div className="absolute inset-0" aria-hidden="true">
         <MediaSlot
-          video
-          subtle
-          src={MEDIA.heroVideo}
-          poster={MEDIA.heroPoster}
-          alt="A drawn line becomes a spatial wireframe, a structural frame, then a completed premium exhibition environment"
-          assetId="VD-01 / IMG-001"
-          brief="Hero film: sketch line to finished environment, 18-22s loop, 16:9. Drop vd-01-hero.mp4 + img-001-hero-poster.jpg into public/media/"
+          asset={MEDIA.hero}
           className="h-full w-full"
+          imgClassName="scale-[1.02]"
+          sizes="100vw"
+          preload
+          decorative
         />
         {/* controlled scrim — copy legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-void via-void/55 to-void/25" />

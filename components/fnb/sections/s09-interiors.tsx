@@ -1,9 +1,21 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { MediaSlot } from '@/components/fnb/media-slot'
 import { INTERIORS, MEDIA } from '@/lib/content'
+
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+
+function subscribeToReducedMotion(onStoreChange: () => void) {
+  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY)
+  mediaQuery.addEventListener('change', onStoreChange)
+  return () => mediaQuery.removeEventListener('change', onStoreChange)
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches
+}
 
 /**
  * S09 INTERIORS — MediaSequence.
@@ -14,40 +26,43 @@ import { INTERIORS, MEDIA } from '@/lib/content'
 export function S09Interiors() {
   const ref = useRef<HTMLElement>(null)
   const [revealed, setRevealed] = useState(false)
+  const reduced = useSyncExternalStore(subscribeToReducedMotion, getReducedMotionSnapshot, () => false)
 
   useEffect(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduced) {
-      setRevealed(true)
       return
     }
     const el = ref.current
     if (!el) return
+    let revealTimer: ReturnType<typeof setTimeout> | undefined
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           // plan draws first, finished space fades in after
-          setTimeout(() => setRevealed(true), 1400)
+          revealTimer = setTimeout(() => setRevealed(true), 1400)
           observer.disconnect()
         }
       },
       { threshold: 0.35 },
     )
     observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
+    return () => {
+      observer.disconnect()
+      if (revealTimer) clearTimeout(revealTimer)
+    }
+  }, [reduced])
+
+  const isRevealed = reduced || revealed
 
   return (
     <section ref={ref} id="s09-interiors" aria-labelledby="s09-heading" className="relative border-t border-steel/40 bg-void">
       <div className="relative aspect-[4/5] w-full sm:aspect-video sm:max-h-[85vh]">
-        {/* Finished space — IMG-005 */}
-        <div className={`absolute inset-0 transition-opacity duration-[480ms] ${revealed ? 'opacity-100' : 'opacity-40'}`}>
+        {/* Conceptual finished-space capability image. */}
+        <div className={`absolute inset-0 transition-opacity duration-[480ms] ${isRevealed ? 'opacity-100' : 'opacity-40'}`}>
           <MediaSlot
-            src={MEDIA.interiorSpace}
-            alt="Finished commercial interior with designed lighting and corrected verticals"
-            assetId="IMG-005"
-            brief="Finished interior, 16:9, architectural discipline. Drop img-005-interior.jpg into public/media/"
+            asset={MEDIA.interiorSpace}
             className="h-full w-full"
+            sizes="100vw"
           />
         </div>
 
@@ -56,7 +71,7 @@ export function S09Interiors() {
           aria-hidden="true"
           viewBox="0 0 1200 675"
           className={`pointer-events-none absolute inset-0 h-full w-full transition-opacity duration-[640ms] ${
-            revealed ? 'opacity-15' : 'opacity-90'
+            isRevealed ? 'opacity-15' : 'opacity-90'
           }`}
           preserveAspectRatio="xMidYMid slice"
         >

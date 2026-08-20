@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { PHYSICAL_TO_DIGITAL } from '@/lib/content'
 
 /**
@@ -15,21 +15,31 @@ import { PHYSICAL_TO_DIGITAL } from '@/lib/content'
  */
 
 const STATE_COUNT = 3
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+const MOBILE_QUERY = '(max-width: 767px)'
+
+function subscribeToStaticMode(onStoreChange: () => void) {
+  const reducedMotion = window.matchMedia(REDUCED_MOTION_QUERY)
+  const mobileViewport = window.matchMedia(MOBILE_QUERY)
+  reducedMotion.addEventListener('change', onStoreChange)
+  mobileViewport.addEventListener('change', onStoreChange)
+  return () => {
+    reducedMotion.removeEventListener('change', onStoreChange)
+    mobileViewport.removeEventListener('change', onStoreChange)
+  }
+}
+
+function getStaticModeSnapshot() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches || window.matchMedia(MOBILE_QUERY).matches
+}
 
 export function S07PhysicalToDigital() {
   const trackRef = useRef<HTMLDivElement>(null)
   const [state, setState] = useState(0)
-  const [reduced, setReduced] = useState(false)
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const isMobile = window.matchMedia('(max-width: 767px)').matches
-    setReduced(mq.matches || isMobile)
-  }, [])
+  const reduced = useSyncExternalStore(subscribeToStaticMode, getStaticModeSnapshot, () => false)
 
   useEffect(() => {
     if (reduced) {
-      setState(STATE_COUNT - 1)
       return
     }
     let raf = 0
@@ -54,6 +64,7 @@ export function S07PhysicalToDigital() {
   }, [reduced])
 
   const t = 'transition-opacity duration-[480ms] ease-out'
+  const currentState = reduced ? STATE_COUNT - 1 : state
 
   return (
     <section id="s07-physical-digital" aria-labelledby="s07-heading" className="border-t border-steel/40 bg-void">
@@ -64,7 +75,7 @@ export function S07PhysicalToDigital() {
             <div className="col-span-12 lg:col-span-6" aria-hidden="true">
               <svg viewBox="0 0 600 480" fill="none" className="w-full max-w-xl">
                 {/* State 1: truss structure — Signal as rig line */}
-                <g className={t} style={{ opacity: state === 0 ? 1 : state === 1 ? 0.35 : 0 }}>
+                <g className={t} style={{ opacity: currentState === 0 ? 1 : currentState === 1 ? 0.35 : 0 }}>
                   <path d="M 60 120 L 540 120 M 60 160 L 540 160" stroke="var(--fnb-mist)" strokeWidth="1.5" />
                   <path d="M 60 120 L 100 160 L 140 120 L 180 160 L 220 120 L 260 160 L 300 120 L 340 160 L 380 120 L 420 160 L 460 120 L 500 160 L 540 120" stroke="var(--fnb-slate)" strokeWidth="1" />
                   <path d="M 100 160 L 100 400 M 500 160 L 500 400" stroke="var(--fnb-mist)" strokeWidth="1.5" />
@@ -73,7 +84,7 @@ export function S07PhysicalToDigital() {
                 </g>
 
                 {/* State 2: dissolve — members fragmenting into points */}
-                <g className={t} style={{ opacity: state === 1 ? 1 : 0 }}>
+                <g className={t} style={{ opacity: currentState === 1 ? 1 : 0 }}>
                   {Array.from({ length: 48 }).map((_, i) => {
                     const x = 80 + (i % 12) * 40
                     const y = 140 + Math.floor(i / 12) * 70 + (i % 3) * 8
@@ -83,7 +94,7 @@ export function S07PhysicalToDigital() {
                 </g>
 
                 {/* State 3: interface grid + connected nodes — Signal as connector */}
-                <g className={t} style={{ opacity: state === 2 ? 1 : 0 }}>
+                <g className={t} style={{ opacity: currentState === 2 ? 1 : 0 }}>
                   {/* grid */}
                   {Array.from({ length: 5 }).map((_, r) => (
                     <path key={`h${r}`} d={`M 80 ${120 + r * 70} L 520 ${120 + r * 70}`} stroke="var(--fnb-steel)" strokeWidth="1" />
@@ -109,7 +120,7 @@ export function S07PhysicalToDigital() {
                 Physical {'\u2192'} digital
               </h2>
               <p
-                data-reveal={state >= 1 || reduced ? 'in' : ''}
+                data-reveal={currentState >= 1 ? 'in' : ''}
                 className="fnb-head mt-6 text-pretty text-2xl text-warm-white md:text-3xl"
               >
                 {PHYSICAL_TO_DIGITAL.statement}
@@ -120,7 +131,7 @@ export function S07PhysicalToDigital() {
                 {PHYSICAL_TO_DIGITAL.links.map((link, i) => (
                   <li
                     key={link.href}
-                    data-reveal={state >= 2 || reduced ? 'in' : ''}
+                    data-reveal={currentState >= 2 ? 'in' : ''}
                     style={{ ['--reveal-delay' as string]: `${i * 50}ms` }}
                     className="border-b border-steel/40"
                   >
