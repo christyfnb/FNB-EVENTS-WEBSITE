@@ -1,37 +1,47 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useSyncExternalStore } from 'react'
 import * as THREE from 'three'
 import { MediaSlot } from '@/components/fnb/media-slot'
 import { getMedia } from '@/lib/media-registry'
 
 const FALLBACK_ASSET = getMedia('capability-digital-dashboard')
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+const MOBILE_QUERY = '(max-width: 1023px)'
+
+function subscribeToStaticMode(onStoreChange: () => void) {
+  const reducedMotion = window.matchMedia(REDUCED_MOTION_QUERY)
+  const mobileViewport = window.matchMedia(MOBILE_QUERY)
+  reducedMotion.addEventListener('change', onStoreChange)
+  mobileViewport.addEventListener('change', onStoreChange)
+  return () => {
+    reducedMotion.removeEventListener('change', onStoreChange)
+    mobileViewport.removeEventListener('change', onStoreChange)
+  }
+}
+
+function getStaticModeSnapshot() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches || window.matchMedia(MOBILE_QUERY).matches
+}
 
 /**
  * PHYSICAL DIGITAL CANVAS (`PhysicalDigitalCanvas`).
  * Encapsulates native Three.js 3D WebGL renderer for Section S07.
  *
  * Performance & Safety:
- * - Lazy initialized via IntersectionObserver (rootMargin 200px).
- * - Render loop pauses when offscreen or tab hidden (`document.hidden`).
+ * - Base visual layer is static fallback media (`digital-dashboard.png`).
+ * - WebGL canvas mounts as an overlay on desktop viewports (≥1024px).
  * - WebGL disabled on mobile (<1024px) & `prefers-reduced-motion: reduce`.
- * - Fallback asset `digital-dashboard.png` rendered on mobile/reduced-motion/WebGL failure.
+ * - Render loop pauses when offscreen or tab hidden (`document.hidden`).
  * - Canvas has pointer-events: none and aria-hidden="true".
  * - Explicit disposal of geometries, materials, and renderer on unmount.
  */
 export function PhysicalDigitalCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [useFallback, setUseFallback] = useState(false)
+  const isStaticMode = useSyncExternalStore(subscribeToStaticMode, getStaticModeSnapshot, () => false)
 
   useEffect(() => {
-    // 1. Mobile (<1024px) & Reduced Motion checks: Do NOT initialize WebGL
-    const isMobile = window.matchMedia('(max-width: 1023px)').matches
-    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    if (isMobile || isReducedMotion) {
-      setUseFallback(true)
-      return
-    }
+    if (isStaticMode) return
 
     const container = containerRef.current
     if (!container) return
@@ -52,18 +62,21 @@ export function PhysicalDigitalCanvas() {
     let pointsMaterial: THREE.PointsMaterial | null = null
 
     try {
-      // 2. Initialize WebGL Renderer safely
+      // 1. Initialize WebGL Renderer safely
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       renderer.setSize(container.clientWidth, container.clientHeight)
-      renderer.setClearColor(0x050505, 0)
-      container.appendChild(renderer.domElement)
+      renderer.setClearColor(0x050505, 1)
+
+      const canvasEl = renderer.domElement
+      canvasEl.className = 'absolute inset-0 h-full w-full pointer-events-none'
+      container.appendChild(canvasEl)
 
       scene = new THREE.Scene()
       camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 100)
       camera.position.set(0, 0, 8)
 
-      // 3. Create Architectural Wireframe Geometry (Truss Box Structure)
+      // 2. Create Architectural Wireframe Geometry (Truss Box Structure)
       const vertices: number[] = []
       const gridWidth = 4
       const gridHeight = 2.5
@@ -105,7 +118,7 @@ export function PhysicalDigitalCanvas() {
       wireframeMesh = new THREE.LineSegments(geometry, lineMaterial)
       scene.add(wireframeMesh)
 
-      // 4. Create Glowing Molten Orange Digital Signal Nodes
+      // 3. Create Glowing Molten Orange Digital Signal Nodes
       const nodePositions = [
         -gridWidth, -gridHeight, depth,
          gridWidth, -gridHeight, depth,
@@ -129,7 +142,7 @@ export function PhysicalDigitalCanvas() {
       nodePoints = new THREE.Points(nodeGeometry, pointsMaterial)
       scene.add(nodePoints)
 
-      // 5. Render Loop with Offscreen / Hidden Suspension
+      // 4. Render Loop with Offscreen / Hidden Suspension
       let clockTime = 0
       const render = () => {
         if (!isIntersecting || !isTabVisible || !renderer || !scene || !camera) return
@@ -154,7 +167,7 @@ export function PhysicalDigitalCanvas() {
         }
       }
 
-      // 6. IntersectionObserver (Lazy Init & Offscreen Suspension)
+      // 5. IntersectionObserver (Lazy Init & Offscreen Suspension)
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -167,7 +180,7 @@ export function PhysicalDigitalCanvas() {
       )
       observer.observe(container)
 
-      // 7. Tab Visibility Suspension
+      // 6. Tab Visibility Suspension
       const handleVisibilityChange = () => {
         isTabVisible = !document.hidden
         if (isTabVisible) startLoop()
@@ -175,7 +188,7 @@ export function PhysicalDigitalCanvas() {
       }
       document.addEventListener('visibilitychange', handleVisibilityChange)
 
-      // 8. Pointer Parallax (Subtle camera tracking)
+      // 7. Pointer Parallax (Subtle camera tracking)
       const handleMouseMove = (e: MouseEvent) => {
         const rect = container.getBoundingClientRect()
         pointerX = ((e.clientX - rect.left) / rect.width) * 2 - 1
@@ -183,7 +196,7 @@ export function PhysicalDigitalCanvas() {
       }
       window.addEventListener('mousemove', handleMouseMove, { passive: true })
 
-      // 9. ResizeObserver Lifecycle
+      // 8. ResizeObserver Lifecycle
       const resizeObserver = new ResizeObserver(() => {
         if (!container || !renderer || !camera) return
         const w = container.clientWidth
@@ -195,16 +208,15 @@ export function PhysicalDigitalCanvas() {
       })
       resizeObserver.observe(container)
 
-      // 10. WebGL Context Loss Handler
-      const canvasEl = renderer.domElement
+      // 9. WebGL Context Loss Handler (hides canvas element so base fallback is visible)
       const handleContextLost = (e: Event) => {
         e.preventDefault()
         cancelAnimationFrame(animFrameId)
-        setUseFallback(true)
+        if (canvasEl) canvasEl.style.display = 'none'
       }
       canvasEl.addEventListener('webglcontextlost', handleContextLost)
 
-      // 11. Complete Unmount Disposal Cleanup
+      // 10. Complete Unmount Disposal Cleanup
       return () => {
         cancelAnimationFrame(animFrameId)
         observer.disconnect()
@@ -226,11 +238,11 @@ export function PhysicalDigitalCanvas() {
         }
       }
     } catch {
-      setUseFallback(true)
+      // On creation failure, base fallback remains 100% visible
     }
-  }, [])
+  }, [isStaticMode])
 
-  if (useFallback) {
+  if (isStaticMode) {
     return (
       <div className="relative aspect-[16/10] w-full max-w-xl overflow-hidden border border-steel/40">
         <MediaSlot
@@ -251,6 +263,16 @@ export function PhysicalDigitalCanvas() {
       ref={containerRef}
       aria-hidden="true"
       className="relative aspect-[16/10] w-full max-w-xl overflow-hidden border border-steel/40 bg-obsidian pointer-events-none"
-    />
+    >
+      <MediaSlot
+        asset={FALLBACK_ASSET}
+        className="h-full w-full object-cover"
+        sizes="45vw"
+        decorative
+      />
+      <div className="absolute bottom-3 left-3 bg-obsidian/90 px-3 py-1 text-[10px] font-mono text-signal border border-steel/40 z-10">
+        CONCEPTUAL CAPABILITY VISUALIZATION
+      </div>
+    </div>
   )
 }
