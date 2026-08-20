@@ -18,7 +18,7 @@ if (typeof window !== 'undefined') {
  *
  * A11y & Performance:
  * - Workflow steps exist in semantic <ul>/<li> tags and remain fully readable without animation.
- * - GSAP ScrollTrigger executes sequential illumination on desktop (≥1024px).
+ * - GSAP ScrollTrigger executes restrained sequential illumination on desktop (≥1024px).
  * - Mobile & prefers-reduced-motion render static workflow items immediately.
  */
 export function S08DigitalCapabilities() {
@@ -40,12 +40,12 @@ export function S08DigitalCapabilities() {
       mm.add('(min-width: 1024px)', () => {
         gsap.fromTo(
           items,
-          { opacity: 0.35, y: 12 },
+          { opacity: 0.6, y: 8 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
-            stagger: 0.15,
+            duration: 0.5,
+            stagger: 0.1,
             ease: 'power2.out',
             scrollTrigger: {
               trigger: section,
